@@ -37,8 +37,8 @@ function mockFn<T extends (...args: never[]) => unknown>(defaultImpl?: T): MockF
 }
 
 /**
- * Mock af RegistryClient med tracking på alle metoder. Fungerer som drop-in
- * erstatning i unit tests uden at skulle bruge MockRegistryServer.
+ * Mock of RegistryClient with tracking on all methods. Works as a drop-in
+ * replacement in unit tests without needing MockRegistryServer.
  */
 export function createMockRegistryClient(initialRemotes: RemoteConfig[] = []): RegistryClient {
   const remotes = [...initialRemotes];

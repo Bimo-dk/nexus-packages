@@ -10,20 +10,20 @@ import {
 import { nextRequestId } from './correlation.js';
 
 export interface RegistryClientOptions {
-  /** Base URL til registry, fx 'http://localhost:3000' eller '/api'. Trailing slash trimmes. */
+  /** Base URL to registry, e.g. 'http://localhost:3000' or '/api'. Trailing slash is trimmed. */
   registryUrl: string;
-  /** Token til X-Bimo-Token header. Påkrævet for skrivnings-endpoints. */
+  /** Token for the X-Bimo-Token header. Required for write endpoints. */
   token: string;
   /**
-   * Optional custom fetch (til testing / Node.js < 18). Default = globalThis.fetch.
+   * Optional custom fetch (for testing / Node.js < 18). Default = globalThis.fetch.
    */
   fetchImpl?: typeof fetch;
 }
 
 /**
- * HTTP-klient til Bimo-Nexus registry API.
+ * HTTP client for the Bimo-Nexus registry API.
  *
- * Eksempel:
+ * Example:
  *   const client = new RegistryClient({ registryUrl: '/api', token: process.env.BIMO_TOKEN });
  *   const remotes = await client.getRemotes();
  */
@@ -151,7 +151,7 @@ export class RegistryClient {
       u.pathname = '/health';
       u.search = '';
       if (u.hostname === 'placeholder.invalid') {
-        // relativ URL — strip og byg relativ /health
+        // relative URL — strip and build relative /health
         return remoteEntryUrl.replace(/\/remoteEntry\.json.*$/, '/health');
       }
       return u.toString();

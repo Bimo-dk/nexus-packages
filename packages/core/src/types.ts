@@ -3,7 +3,7 @@ export type RemoteHealthStatus = 'healthy' | 'degraded' | 'down' | 'unknown';
 export interface RemoteConfig {
   /** Unikt navn, camelCase, starter med lille bogstav. */
   name: string;
-  /** URL til remoteEntry.json — kan være absolut (http(s)://) eller relativ (/...). */
+  /** URL til remoteEntry.json — kan be absolut (http(s)://) eller relativ (/...). */
   url: string;
   /** Exposed module path. Default './RemoteEntry'. */
   exposedModule: string;
@@ -11,7 +11,7 @@ export interface RemoteConfig {
   routePath: string;
   /** Om remoten er aktivt registreret hos host. */
   enabled: boolean;
-  /** ISO 8601 timestamp for hvornår remoten blev tilføjet. */
+  /** ISO 8601 timestamp for hvornaar remoten blev added. */
   addedAt: string;
   /** ISO 8601 timestamp for seneste health-check. */
   lastHealthCheck?: string;

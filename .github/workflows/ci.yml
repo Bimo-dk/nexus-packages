@@ -39,7 +39,7 @@ jobs:
         with:
           script: |
             const status = '${{ job.status }}';
-            const emoji = status === 'success' ? '✅' : '❌';
+            const emoji = status === 'success' ? '�aa' : '❌';
             const body = [
               `## ${emoji} Build status: ${status}`,
               '',

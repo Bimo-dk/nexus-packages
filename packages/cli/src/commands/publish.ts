@@ -34,7 +34,7 @@ export async function publish(): Promise<void> {
 
   const client = new RegistryClient({ registryUrl, token });
 
-  console.log(chalk.cyan(`â†’ Publishing "${config.name}" to ${registryUrl}/api/remotes`));
+  console.log(chalk.cyan(`âae’ Publishing "${config.name}" to ${registryUrl}/api/remotes`));
   console.log(chalk.dim(`  url=${remoteUrl} route=${routePath} exposedModule=${exposedModule}`));
 
   try {

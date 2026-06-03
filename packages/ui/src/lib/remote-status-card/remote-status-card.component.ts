@@ -24,7 +24,7 @@ import { HealthBadgeComponent } from '../health-badge/health-badge.component';
           [checked]="remote.enabled"
           (change)="onToggle($event)"
           color="primary">
-          {{ remote.enabled ? 'Aktiv' : 'Inaktiv' }}
+          {{ remote.enabled ? 'Active' : 'Inactive' }}
         </mat-slide-toggle>
       </mat-card-actions>
     </mat-card>

@@ -15,7 +15,7 @@ export async function dev(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(chalk.cyan(`â†’ Starting Bimo-Nexus dev proxy using ${path.basename(configPath)}`));
+  console.log(chalk.cyan(`âae’ Starting Bimo-Nexus dev proxy using ${path.basename(configPath)}`));
   console.log('');
 
   // Try to find dev-proxy from a couple of well-known locations:

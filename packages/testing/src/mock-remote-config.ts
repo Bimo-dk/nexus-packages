@@ -1,8 +1,8 @@
 import type { RegistryResponse, RemoteConfig } from '@bimo-dk/nexus-core';
 
 /**
- * Opretter et komplet RemoteConfig med fornuftige default-værdier.
- * Override felter via partial-argument.
+ * Creates a complete RemoteConfig with sensible default values.
+ * Override fields via partial argument.
  */
 export function createMockRemoteConfig(overrides: Partial<RemoteConfig> = {}): RemoteConfig {
   const name = overrides.name ?? 'mockRemote';
@@ -19,7 +19,7 @@ export function createMockRemoteConfig(overrides: Partial<RemoteConfig> = {}): R
 }
 
 /**
- * Opretter en RegistryResponse med N mock remotes (default 2).
+ * Creates a RegistryResponse with N mock remotes (default 2).
  */
 export function createMockRegistryResponse(count = 2): RegistryResponse {
   const remotes = Array.from({ length: count }, (_, i) =>

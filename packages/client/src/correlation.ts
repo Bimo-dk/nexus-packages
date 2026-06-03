@@ -1,6 +1,6 @@
 /**
- * Genererer per-session og per-request correlation IDs. Universal — virker i både
- * Node.js og browser via globalThis.crypto.
+ * Generates per-session and per-request correlation IDs. Universal — works in both
+ * Node.js and browser via globalThis.crypto.
  */
 
 let sessionIdCache: string | null = null;
@@ -14,7 +14,7 @@ function makeSessionId(): string {
   return Math.random().toString(36).substring(2, 10);
 }
 
-/** Returnerer stabil session-ID (samme i hele processens/sidens levetid). */
+/** Returns a stable session ID (same for the entire process/page lifetime). */
 export function getSessionId(): string {
   if (sessionIdCache === null) {
     sessionIdCache = makeSessionId();
@@ -22,7 +22,7 @@ export function getSessionId(): string {
   return sessionIdCache;
 }
 
-/** Returnerer nyt request-ID i form sessionId-counter. */
+/** Returns a new request ID in the form sessionId-counter. */
 export function nextRequestId(): string {
   requestCounter++;
   return `${getSessionId()}-${requestCounter}`;

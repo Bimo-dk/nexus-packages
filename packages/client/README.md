@@ -1,6 +1,6 @@
 # @bimo-dk/nexus-client
 
-HTTP + WebSocket klient til Bimo-Nexus registry API.
+HTTP + WebSocket client for the Bimo-Nexus registry API.
 
 ## Installation
 
@@ -18,10 +18,10 @@ const client = new RegistryClient({
   token: process.env.BIMO_TOKEN!,
 });
 
-// Læs
+// Read
 const remotes = await client.getRemotes();
 
-// Skriv
+// Write
 await client.addRemote({
   name: 'myRemote',
   url: '/remotes/myRemote/remoteEntry.json',
@@ -56,11 +56,11 @@ ws.connect();
 ws.disconnect();
 ```
 
-Auto-reconnect med exponential backoff (1s → 2s → 4s → ... → 30s max).
+Auto-reconnect with exponential backoff (1s -> 2s -> 4s -> ... -> 30s max).
 
 ## Re-exports
 
-Alle typer + konstanter fra `@bimo-dk/nexus-core` er re-eksporteret så du kun behøver én import:
+All types + constants from `@bimo-dk/nexus-core` are re-exported so you only need one import:
 
 ```typescript
 import { RegistryClient, RemoteConfig, NEXUS_DEFAULTS } from '@bimo-dk/nexus-client';

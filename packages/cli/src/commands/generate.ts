@@ -15,7 +15,7 @@ export async function generateRemote(opts: { name?: string; route?: string }): P
     const a = await inquirer.prompt<{ name: string }>([{
       type: 'input',
       name: 'name',
-      message: 'Remote name (camelCase, fx remoteThree):',
+      message: 'Remote name (camelCase, e.g. remoteThree):',
       validate: (v: string) => isValidRemoteName(v) || 'Must be camelCase starting with a lowercase letter',
     }]);
     name = a.name;
@@ -28,7 +28,7 @@ export async function generateRemote(opts: { name?: string; route?: string }): P
     const a = await inquirer.prompt<{ route: string }>([{
       type: 'input',
       name: 'route',
-      message: 'Route path (kebab-case, fx remote-three):',
+      message: 'Route path (kebab-case, e.g. remote-three):',
       default: name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(),
       validate: (v: string) => isValidRoutePath(v) || 'Must be kebab-case starting with a lowercase letter',
     }]);
@@ -67,11 +67,11 @@ export async function generateRemote(opts: { name?: string; route?: string }): P
 }
 
 async function substituteTemplate(dir: string, name: string, route: string): Promise<void> {
-  // De fire steder hvor remote-navnet skal skiftes (per nexus-remote-templat README):
+  // The four places where the remote name must be replaced (per nexus-remote-templat README):
   // 1. package.json "name"
-  // 2. federation.config.json "name" (eller @NexusRemote decorator)
+  // 2. federation.config.json "name" (or @NexusRemote decorator)
   // 3. README.md heading
-  // 4. angular.json projects key (hvis til stede)
+  // 4. angular.json projects key (if present)
   const candidates = [
     'package.json',
     'federation.config.json',

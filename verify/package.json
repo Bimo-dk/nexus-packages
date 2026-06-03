@@ -2,7 +2,7 @@
   "name": "nexus-packages-verify",
   "version": "0.0.0",
   "private": true,
-  "description": "Post-publish smoke test: install hver pakke fra npm og verificer at de loader korrekt",
+  "description": "Post-publish smoke test: install each package from npm and verify they load correctly",
   "type": "module",
   "scripts": {
     "verify": "node verify.mjs"

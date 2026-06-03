@@ -1,8 +1,8 @@
 /**
- * Bimo-Nexus platform defaults. Frozen så de ikke kan muteres ved runtime.
+ * Bimo-Nexus platform defaults. Frozen so they cannot be mutated at runtime.
  *
- * Alle ports og headers er aftalte konventioner på tværs af services.
- * Bumpr major version på @bimo-dk/nexus-core hvis nogen af disse værdier ændres.
+ * All ports and headers are agreed conventions across services.
+ * Bump major version on @bimo-dk/nexus-core if any of these values change.
  */
 export const NEXUS_DEFAULTS = Object.freeze({
   REGISTRY_PORT: 3000,
@@ -12,7 +12,7 @@ export const NEXUS_DEFAULTS = Object.freeze({
   TOKEN_HEADER: 'X-Bimo-Token',
   REQUEST_ID_HEADER: 'X-Request-ID',
   WEBSOCKET_PATH: '/ws',
-  CACHE_TTL_MS: 86_400_000, // 24t
+  CACHE_TTL_MS: 86_400_000, // 24h
   HEALTH_POLL_INTERVAL_MS: 30_000,
   WS_MAX_RECONNECT_DELAY_MS: 30_000,
 } as const);

@@ -1,6 +1,6 @@
 /**
- * Angular-specifikke test helpers. Importér fra '@bimo-dk/nexus-testing/angular'.
- * Peer-dep på @angular/core er kun nødvendig hvis du bruger denne entry.
+ * Angular-specific test helpers. Import from '@bimo-dk/nexus-testing/angular'.
+ * Peer dep on @angular/core is only required if you use this entry.
  */
 import type { Provider, Type } from '@angular/core';
 import type { RegistryClient } from '@bimo-dk/nexus-client';
@@ -8,9 +8,9 @@ import type { RemoteConfig } from '@bimo-dk/nexus-core';
 import { createMockRegistryClient } from './mock-registry-client.js';
 
 /**
- * Returnerer en Angular Provider der binder en token til en mock RegistryClient.
+ * Returns an Angular Provider that binds a token to a mock RegistryClient.
  *
- * Brug:
+ * Usage:
  *   import { provideMockRegistry } from '@bimo-dk/nexus-testing/angular';
  *   import { RegistryClient } from '@bimo-dk/nexus-client';
  *

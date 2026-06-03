@@ -1,6 +1,6 @@
 # @bimo-dk/nexus-ui
 
-Angular 19 komponent-bibliotek til Bimo-Nexus. Standalone-komponenter med Angular Material under hjælmen.
+Angular 19 component library for Bimo-Nexus. Standalone components with Angular Material under the hood.
 
 ## Installation
 
@@ -8,7 +8,7 @@ Angular 19 komponent-bibliotek til Bimo-Nexus. Standalone-komponenter med Angula
 npm install @bimo-dk/nexus-ui @angular/material @angular/cdk
 ```
 
-## Komponenter
+## Components
 
 ### `<bimo-health-badge>`
 
@@ -21,7 +21,7 @@ import { HealthBadgeComponent } from '@bimo-dk/nexus-ui';
 })
 ```
 
-Inputs: `status?: 'healthy' | 'degraded' | 'down' | 'unknown'`. Farvekodet pill: grøn/gul/rød/grå.
+Inputs: `status?: 'healthy' | 'degraded' | 'down' | 'unknown'`. Color-coded pill: green/yellow/red/gray.
 
 ### `<bimo-offline-banner>`
 
@@ -29,7 +29,7 @@ Inputs: `status?: 'healthy' | 'degraded' | 'down' | 'unknown'`. Farvekodet pill:
 template: `<bimo-offline-banner [isOffline]="!registryOnline()" />`
 ```
 
-Inputs: `isOffline: boolean`. Vises kun når `isOffline = true`.
+Inputs: `isOffline: boolean`. Only displayed when `isOffline = true`.
 
 ### `<bimo-loading-spinner>`
 
@@ -50,7 +50,7 @@ template: `
 `
 ```
 
-Inputs: `remote: RemoteConfig` (påkrævet).
+Inputs: `remote: RemoteConfig` (required).
 Outputs: `toggle: EventEmitter<RemoteConfig>`, `navigate: EventEmitter<RemoteConfig>`.
 
 ## Peer dependencies

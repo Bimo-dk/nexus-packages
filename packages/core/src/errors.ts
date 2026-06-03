@@ -1,7 +1,7 @@
 /**
- * Typed fejlklasse for alle fejl der kommer fra registry API.
+ * Typed error class for all errors coming from the registry API.
  *
- * Kastes af RegistryClient i @bimo-dk/nexus-client. Konsumenter kan gøre:
+ * Thrown by RegistryClient in @bimo-dk/nexus-client. Consumers can do:
  *   try { await client.getRemotes(); }
  *   catch (err) { if (err instanceof RegistryError) { ... } }
  */
@@ -14,7 +14,7 @@ export class RegistryError extends Error {
     this.name = 'RegistryError';
     this.statusCode = statusCode;
     this.correlationId = correlationId;
-    // Bevarer korrekt prototype-chain (vigtigt for instanceof i ES5-targets)
+    // Preserve correct prototype chain (important for instanceof in ES5 targets)
     Object.setPrototypeOf(this, RegistryError.prototype);
   }
 

@@ -1,6 +1,6 @@
 # @bimo-dk/nexus-core
 
-TypeScript-typer, konstanter og validators til Bimo-Nexus platformen. Ingen runtime dependencies — kun TypeScript.
+TypeScript types, constants and validators for the Bimo-Nexus platform. No runtime dependencies — TypeScript only.
 
 ## Installation
 
@@ -8,7 +8,7 @@ TypeScript-typer, konstanter og validators til Bimo-Nexus platformen. Ingen runt
 npm install @bimo-dk/nexus-core
 ```
 
-## Brug
+## Usage
 
 ```typescript
 import {
@@ -29,6 +29,6 @@ console.log(NEXUS_DEFAULTS.TOKEN_HEADER); // 'X-Bimo-Token'
 ## Exports
 
 - **Types**: `RemoteConfig`, `RegistryResponse`, `HealthStatus`, `WebSocketMessage`, `RemoteHealthStatus`, `AddRemoteRequest`, `UpdateRemoteRequest`
-- **Constants**: `NEXUS_DEFAULTS` (frozen object med port/header-defaults)
-- **Errors**: `RegistryError` (typed exception med statusCode + correlationId)
+- **Constants**: `NEXUS_DEFAULTS` (frozen object with port/header defaults)
+- **Errors**: `RegistryError` (typed exception with statusCode + correlationId)
 - **Validators**: `isValidRemoteName`, `isValidRoutePath`, `isValidUrl`, `isValidUrlOrPath`

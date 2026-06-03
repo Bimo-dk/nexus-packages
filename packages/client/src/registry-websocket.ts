@@ -1,23 +1,23 @@
 import { NEXUS_DEFAULTS, type WebSocketMessage } from '@bimo-dk/nexus-core';
 
 export interface RegistryWebSocketOptions {
-  /** Base URL til registry/proxy — bruges til at udlede ws://...:port/ws. */
+  /** Base URL to registry/proxy — used to derive ws://...:port/ws. */
   registryUrl: string;
-  /** Token (forwardes som subprotocol eller query — i øjeblikket ikke brugt på server-siden). */
+  /** Token (forwarded as subprotocol or query — currently unused on the server side). */
   token: string;
-  /** Min reconnect delay i ms. Default 1000. */
+  /** Min reconnect delay in ms. Default 1000. */
   minReconnectDelayMs?: number;
-  /** Max reconnect delay i ms. Default NEXUS_DEFAULTS.WS_MAX_RECONNECT_DELAY_MS. */
+  /** Max reconnect delay in ms. Default NEXUS_DEFAULTS.WS_MAX_RECONNECT_DELAY_MS. */
   maxReconnectDelayMs?: number;
 }
 
 type MessageHandler = (msg: WebSocketMessage) => void;
 
 /**
- * WebSocket-klient til registry's /ws endpoint.
+ * WebSocket client for the registry's /ws endpoint.
  *
- * Indbygget exponential backoff reconnect (1s → 2s → 4s → ... → max).
- * Universal: virker i browser (native WebSocket) og Node.js 22+ (native WebSocket).
+ * Built-in exponential backoff reconnect (1s -> 2s -> 4s -> ... -> max).
+ * Universal: works in browser (native WebSocket) and Node.js 22+ (native WebSocket).
  */
 export class RegistryWebSocket {
   private readonly wsUrl: string;
@@ -128,7 +128,7 @@ export class RegistryWebSocket {
     if (trimmed.startsWith('https://')) {
       return trimmed.replace(/^https:\/\//, 'wss://') + NEXUS_DEFAULTS.WEBSOCKET_PATH;
     }
-    // Relativ URL — kun meningsfuldt i browser-context med window.location
+    // Relative URL — only meaningful in browser context with window.location
     if (typeof window !== 'undefined' && window.location) {
       const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       return `${proto}//${window.location.host}${trimmed}${NEXUS_DEFAULTS.WEBSOCKET_PATH}`;

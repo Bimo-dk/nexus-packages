@@ -1,8 +1,8 @@
 # @bimo-dk/nexus-testing
 
-Test utilities, mock fabrikker og in-memory MockRegistryServer for Bimo-Nexus.
+Test utilities, mock factories and in-memory MockRegistryServer for Bimo-Nexus.
 
-**Kun til devDependencies — aldrig production deps.**
+**Only for devDependencies — never production deps.**
 
 ## Installation
 
@@ -10,7 +10,7 @@ Test utilities, mock fabrikker og in-memory MockRegistryServer for Bimo-Nexus.
 npm install -D @bimo-dk/nexus-testing
 ```
 
-## Eksempler
+## Examples
 
 ### Mock factories
 
@@ -21,7 +21,7 @@ const remote = createMockRemoteConfig({ name: 'checkout' });
 const response = createMockRegistryResponse(5); // 5 mock remotes
 ```
 
-### MockRegistryServer (integrationstests)
+### MockRegistryServer (integration tests)
 
 ```typescript
 import { MockRegistryServer } from '@bimo-dk/nexus-testing';
