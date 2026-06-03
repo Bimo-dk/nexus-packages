@@ -5,7 +5,8 @@ import { generateRemote } from './commands/generate.js';
 import { publish } from './commands/publish.js';
 import { status } from './commands/status.js';
 import { health } from './commands/health.js';
-import { dev } from './commands/dev.js';
+import { devCommand } from './commands/dev/index.js';
+import { devStatusCommand } from './commands/dev/status.js';
 
 // Load .env if it exists in cwd
 loadEnv({ path: '.env', quiet: true });
@@ -42,10 +43,19 @@ program
   .description('Health check all remotes and print response times')
   .action(health);
 
-program
+const dev = program
   .command('dev')
-  .description('Start nexus dev proxy (reads nexus.dev.json from cwd)')
-  .action(dev);
+  .description('Start local dev environment: proxy + autostart configured remotes')
+  .option('-c, --config <file>', 'Path to nexus.config.json (default: search cwd)')
+  .option('-p, --port <port>', 'Override proxy port', (v: string) => Number(v))
+  .option('--no-open', 'Do not open browser')
+  .option('--no-autostart', 'Do not autostart npm dev-servers for remotes')
+  .action(devCommand);
+dev
+  .command('status')
+  .description('Show which configured remotes are running locally')
+  .option('-c, --config <file>', 'Path to nexus.config.json (default: search cwd)')
+  .action(devStatusCommand);
 
 program.parseAsync(process.argv).catch((err: unknown) => {
   console.error(err instanceof Error ? err.message : err);
