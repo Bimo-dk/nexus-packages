@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".angular-cache/**"],
+      "inputs": [
+        "src/**",
+        "package.json",
+        "tsconfig*.json",
+        "ng-package.json",
+        "tsup.config.ts"
+      ]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "inputs": [
+        "src/**",
+        "test/**",
+        "package.json",
+        "tsconfig*.json"
+      ]
+    },
+    "lint": {
+      "outputs": [],
+      "inputs": ["src/**", ".eslintrc*", "eslint.config.*"]
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    }
+  }
+}

@@ -1,0 +1,73 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package name (fx core, client, ui, testing, cli)'
+        required: true
+        type: choice
+        options:
+          - core
+          - client
+          - ui
+          - testing
+          - cli
+      version:
+        description: 'New version (semver: 1.2.3)'
+        required: true
+        type: string
+      tag:
+        description: 'npm dist-tag (latest, next, beta)'
+        required: false
+        default: 'latest'
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build target package
+        run: npm run build --workspace=@bimo-nexus/${{ inputs.package }}
+
+      - name: Test target package
+        run: npm test --workspace=@bimo-nexus/${{ inputs.package }}
+
+      - name: Set version
+        working-directory: packages/${{ inputs.package }}
+        run: npm version ${{ inputs.version }} --no-git-tag-version
+
+      - name: Publish to npm
+        working-directory: packages/${{ inputs.package }}
+        run: npm publish --access public --tag ${{ inputs.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: 'true'
+
+      - name: Create GitHub release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `@bimo-nexus/${{ inputs.package }}@${{ inputs.version }}`,
+              name: `@bimo-nexus/${{ inputs.package }} v${{ inputs.version }}`,
+              body: 'Manual hotfix release triggered via workflow_dispatch.',
+            });

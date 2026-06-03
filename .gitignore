@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.turbo/
+.angular/
+.angular-cache/
+coverage/
+*.log
+.env
+.env.local
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+.idea/
+.vscode/

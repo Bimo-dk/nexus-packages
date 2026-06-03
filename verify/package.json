@@ -1,0 +1,14 @@
+{
+  "name": "nexus-packages-verify",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Post-publish smoke test: install hver pakke fra npm og verificer at de loader korrekt",
+  "type": "module",
+  "scripts": {
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "@bimo-nexus/core": "latest",
+    "@bimo-nexus/client": "latest"
+  }
+}

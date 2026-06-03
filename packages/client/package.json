@@ -1,0 +1,49 @@
+{
+  "name": "@bimo-nexus/client",
+  "version": "0.1.0",
+  "description": "HTTP + WebSocket klient til Bimo-Nexus registry API",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bimo-dk/nexus-packages.git",
+    "directory": "packages/client"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "lint": "echo \"(skipping lint — no eslint config yet)\" && exit 0",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@bimo-nexus/core": "*"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
