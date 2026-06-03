@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, type EnvironmentProviders, type Provider, makeEnvironmentProviders } from '@angular/core';
-import { loadRuntimeConfig } from '../config-loader.js';
-import { NEXUS_CONFIG } from '../tokens.js';
-import type { NexusRuntimeConfig } from '../types.js';
+import { loadRuntimeConfig } from '../config-loader';
+import { NEXUS_CONFIG } from '../tokens';
+import type { NexusRuntimeConfig } from '../types';
 
 /**
  * Bootstrap-time loader for /assets/config.json.

@@ -6,11 +6,11 @@ import {
   makeEnvironmentProviders,
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideNexusConfig } from './provide-nexus-config.js';
-import { correlationIdInterceptor } from '../interceptors/correlation-id.interceptor.js';
-import { nexusAuthInterceptor } from '../interceptors/nexus-auth.interceptor.js';
-import { DynamicNexusService } from '../host/dynamic-nexus.service.js';
-import type { NexusHostConfig, NexusRuntimeConfig } from '../types.js';
+import { provideNexusConfig } from './provide-nexus-config';
+import { correlationIdInterceptor } from '../interceptors/correlation-id.interceptor';
+import { nexusAuthInterceptor } from '../interceptors/nexus-auth.interceptor';
+import { DynamicNexusService } from '../host/dynamic-nexus.service';
+import type { NexusHostConfig, NexusRuntimeConfig } from '../types';
 
 export interface NexusHostProviderOptions {
   /** Runtime config defaults (overridden by /assets/config.json at startup). */

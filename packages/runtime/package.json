@@ -1,39 +1,24 @@
 {
   "name": "@bimo-dk/nexus-runtime",
   "version": "0.1.0",
-  "description": "Angular providers for Bimo-Nexus remotes and hosts — self-registration, runtime config, dynamic federation",
+  "description": "Angular providers + services + components for Bimo-Nexus hosts and remotes",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",
     "directory": "packages/runtime"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "sideEffects": false,
   "scripts": {
-    "build": "tsup",
-    "test": "vitest run --passWithNoTests",
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.prod.json",
+    "test": "echo \"(runtime tests via Angular TestBed in consumers)\" && exit 0",
     "lint": "echo \"(skipping lint — no eslint config yet)\" && exit 0",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit -p tsconfig.lib.json",
     "clean": "rimraf dist"
   },
   "dependencies": {
     "@bimo-dk/nexus-core": "*",
-    "@bimo-dk/nexus-client": "*"
+    "@bimo-dk/nexus-client": "*",
+    "tslib": "^2.3.0"
   },
   "peerDependencies": {
     "@angular/common": "^19.0.0",
@@ -45,14 +30,14 @@
   "devDependencies": {
     "@angular-architects/native-federation": "^19.0.0",
     "@angular/common": "^19.0.0",
+    "@angular/compiler": "^19.0.0",
+    "@angular/compiler-cli": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@types/node": "^22.10.0",
+    "ng-packagr": "^19.0.0",
     "rimraf": "^6.0.1",
     "rxjs": "^7.8.0",
-    "tsup": "^8.3.5",
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.8"
+    "typescript": "~5.6.3"
   },
   "publishConfig": {
     "access": "public",

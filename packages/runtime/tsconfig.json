@@ -1,13 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "types": ["node"],
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": false,
-    "useDefineForClassFields": false
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
+    "emitDecoratorMetadata": true,
+    "noImplicitOverride": true,
+    "useDefineForClassFields": false,
+    "moduleResolution": "node",
+    "module": "ES2022",
+    "types": [],
+    "lib": ["ES2022", "DOM"]
+  }
 }

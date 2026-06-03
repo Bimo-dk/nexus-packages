@@ -1,6 +1,6 @@
 import { Injectable, Type, inject } from '@angular/core';
 import { loadRemoteModule } from '@angular-architects/native-federation';
-import { DynamicNexusService } from './dynamic-nexus.service.js';
+import { DynamicNexusService } from './dynamic-nexus.service';
 
 /**
  * Loads a single exposed module from a registered remote.

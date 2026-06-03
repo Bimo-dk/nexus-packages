@@ -1,4 +1,4 @@
-import type { NexusRuntimeConfig } from './types.js';
+import type { NexusRuntimeConfig } from './types';
 
 const DEFAULT_PATH = '/assets/config.json';
 

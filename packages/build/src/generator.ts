@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
-import type { DiscoveredRemote, GenerateOptions } from './types.js';
+import type { CatalogEntry, CatalogManifest, DiscoveredRemote, GenerateOptions } from './types.js';
 import { defaultSharedBlock } from './naming.js';
 
 export interface GeneratedConfig {
@@ -84,4 +84,61 @@ async function readExistingConfig(filePath: string): Promise<Record<string, unkn
   } catch {
     return undefined;
   }
+}
+
+/**
+ * Write catalog.json next to the published bundle so hosts (or the portal)
+ * can fetch one JSON per remote and aggregate them into a cross-domain
+ * Component Catalog UI.
+ *
+ * Only @NexusRemote classes that ALSO carry @NexusComponent metadata are
+ * included. The primary RemoteEntry (no metadata) is silently skipped.
+ *
+ * Default output path is `public/catalog.json` — nginx will serve it as
+ * `/catalog.json` from the remote's URL.
+ */
+export async function writeCatalogManifest(
+  remotes: DiscoveredRemote[],
+  projectRoot: string,
+  options: GenerateOptions = {},
+): Promise<{ written: boolean; path: string; manifest: CatalogManifest }> {
+  if (remotes.length === 0) {
+    throw new Error('No @NexusRemote decorators found — nothing to write.');
+  }
+
+  const catalogPath = path.resolve(projectRoot, options.catalogPath ?? 'public/catalog.json');
+  const remoteName = remotes[0].name;
+
+  const entries: CatalogEntry[] = remotes
+    .filter((r) => r.metadata !== undefined)
+    .map((r) => {
+      const meta = r.metadata!;
+      return {
+        remote: remoteName,
+        expose: r.exposeAs,
+        className: r.className,
+        title: meta.title,
+        description: meta.description,
+        category: meta.category,
+        tags: meta.tags ?? [],
+        icon: meta.icon,
+        inputs: meta.inputs ?? {},
+        experimental: meta.experimental ?? false,
+      };
+    });
+
+  const manifest: CatalogManifest = {
+    remote: remoteName,
+    generatedAt: new Date().toISOString(),
+    entries,
+  };
+
+  if (options.dryRun) {
+    return { written: false, path: catalogPath, manifest };
+  }
+
+  await fs.mkdir(path.dirname(catalogPath), { recursive: true });
+  const json = JSON.stringify(manifest, null, 2) + '\n';
+  await fs.writeFile(catalogPath, json, 'utf8');
+  return { written: true, path: catalogPath, manifest };
 }

@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import type { RemoteConfig, WebSocketMessage } from '@bimo-dk/nexus-core';
-import { NEXUS_CONFIG } from '../tokens.js';
+import { NEXUS_CONFIG } from '../tokens';
 
 const MIN_RECONNECT_MS = 1000;
 const MAX_RECONNECT_MS = 30000;

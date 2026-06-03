@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { NEXUS_CONFIG } from './tokens.js';
-import { readRemoteMetadata } from './decorator-meta.js';
-import { deriveRouteFromName } from './route-utils.js';
-import type { NexusRemoteConfig } from './types.js';
+import { NEXUS_CONFIG } from './tokens';
+import { readRemoteMetadata } from './decorator-meta';
+import { deriveRouteFromName } from './route-utils';
+import type { NexusRemoteConfig } from './types';
 
 interface ResolvedRegistration {
   name: string;

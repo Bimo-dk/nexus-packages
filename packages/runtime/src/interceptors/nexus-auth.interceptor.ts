@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import type { HttpInterceptorFn } from '@angular/common/http';
-import { NEXUS_CONFIG } from '../tokens.js';
+import { NEXUS_CONFIG } from '../tokens';
 
 /**
  * Adds X-Nexus-Token to any request that targets the registry URL.

@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, defer, from, map, of, tap } from 'rxjs';
 import type { RegistryResponse, RemoteConfig } from '@bimo-dk/nexus-core';
-import { NEXUS_CONFIG } from '../tokens.js';
+import { NEXUS_CONFIG } from '../tokens';
 
 interface CacheEntry {
   timestamp: number;

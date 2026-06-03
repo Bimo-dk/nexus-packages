@@ -3,8 +3,8 @@ import { Router, type Routes } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 import type { RemoteConfig } from '@bimo-dk/nexus-core';
-import { RegistryService } from './registry.service.js';
-import { RegistryWebSocketService } from './registry-websocket.service.js';
+import { RegistryService } from './registry.service';
+import { RegistryWebSocketService } from './registry-websocket.service';
 
 @Injectable({ providedIn: 'root' })
 export class DynamicNexusService {
