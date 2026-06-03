@@ -26,9 +26,12 @@ interface NexusMarked {
  *   export default class CheckoutComponent {}
  */
 export function NexusRemote(options: NexusRemoteOptions = {}): ClassDecorator {
-  return ((target: object) => {
+  // Pure mutation — do NOT return the class. Returning a value tells Angular's
+  // ngc/AOT pipeline that the class has been replaced, which can drop the ivy
+  // metadata that @Component adds (leading to "JIT compiler unavailable" at
+  // runtime when the federated component is rendered via NgComponentOutlet).
+  return ((target: object): void => {
     (target as NexusMarked)[NEXUS_REMOTE_META] = options;
-    return target;
   }) as ClassDecorator;
 }
 
