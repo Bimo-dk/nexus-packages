@@ -5,7 +5,7 @@ import { isValidRemoteName, isValidRoutePath } from '@bimo-dk/nexus-core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
-const TEMPLATE_REPO = 'https://github.com/Bimo-dk/remote-templat.git';
+const TEMPLATE_REPO = 'https://github.com/Bimo-dk/nexus-remote-templat.git';
 
 export async function generateRemote(opts: { name?: string; route?: string }): Promise<void> {
   let name = opts.name;
@@ -67,7 +67,7 @@ export async function generateRemote(opts: { name?: string; route?: string }): P
 }
 
 async function substituteTemplate(dir: string, name: string, route: string): Promise<void> {
-  // De fire steder hvor remote-navnet skal skiftes (per remote-templat README):
+  // De fire steder hvor remote-navnet skal skiftes (per nexus-remote-templat README):
   // 1. package.json "name"
   // 2. federation.config.json "name" (eller @NexusRemote decorator)
   // 3. README.md heading

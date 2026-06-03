@@ -22,7 +22,7 @@ program
 const generate = program.command('generate').description('Scaffold ny Bimo-Nexus artefakt');
 generate
   .command('remote')
-  .description('Scaffold en ny remote-app fra remote-templat')
+  .description('Scaffold en ny remote-app fra nexus-remote-templat')
   .option('-n, --name <name>', 'Remote name (camelCase)')
   .option('-r, --route <route>', 'Route path (kebab-case)')
   .action(generateRemote);

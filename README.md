@@ -104,4 +104,4 @@ Efter publish kan disse repos peg på pakkerne:
 | `nexus-example/nexus-registry` | `@bimo-dk/nexus-core` |
 | `nexus-example/host-template` | `@bimo-dk/nexus-core`, `@bimo-dk/nexus-client`, `@bimo-dk/nexus-ui` |
 | `nexus-example/nexus-portal` | `@bimo-dk/nexus-core`, `@bimo-dk/nexus-client`, `@bimo-dk/nexus-ui` |
-| `nexus-example/remote-templat` | `@bimo-dk/nexus-core`, `@bimo-dk/nexus-ui` |
+| `nexus-remote-templat` | `@bimo-dk/nexus-core`, `@bimo-dk/nexus-ui` |
