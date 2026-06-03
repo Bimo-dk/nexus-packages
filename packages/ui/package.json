@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Bimo-dk/peripheral.git",
+    "url": "https://github.com/Bimo-dk/nexus-packages.git",
     "directory": "packages/ui"
   },
   "scripts": {

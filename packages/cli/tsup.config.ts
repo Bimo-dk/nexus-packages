@@ -9,4 +9,7 @@ export default defineConfig({
   target: 'es2022',
   banner: { js: '#!/usr/bin/env node' },
   shims: true,
+  outExtension() {
+    return { js: '.cjs' };
+  },
 });

@@ -12,4 +12,7 @@ export default defineConfig({
   treeshake: true,
   target: 'es2022',
   external: ['@angular/core'],
+  outExtension({ format }) {
+    return { js: format === 'cjs' ? '.cjs' : '.mjs' };
+  },
 });
