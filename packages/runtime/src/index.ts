@@ -17,6 +17,7 @@ export { SelfRegisterService } from './self-register.service.js';
 export { DynamicNexusService } from './host/dynamic-nexus.service.js';
 export { RegistryService } from './host/registry.service.js';
 export { RegistryWebSocketService } from './host/registry-websocket.service.js';
+export { ComponentLoaderService } from './host/component-loader.service.js';
 
 // Interceptors (for advanced wiring)
 export { correlationIdInterceptor } from './interceptors/correlation-id.interceptor.js';
