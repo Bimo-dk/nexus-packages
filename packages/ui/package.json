@@ -37,6 +37,7 @@
     "typescript": "~5.6.3"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
   }
 }
