@@ -4,6 +4,22 @@ import ts from 'typescript';
 import type { DiscoveredRemote, ScanOptions } from './types.js';
 import { resolveName, toKebabCase } from './naming.js';
 
+// Re-export build-time helpers under this Node-only subpath so consumers can
+// `import { ..., writeFederationConfig } from '@bimo-dk/nexus-build/scanner'`.
+export { writeFederationConfig, type GeneratedConfig } from './generator.js';
+export {
+  resolveName,
+  toCamelCase,
+  toKebabCase,
+  stripClassSuffix,
+  defaultSharedBlock,
+} from './naming.js';
+export type {
+  DiscoveredRemote,
+  ScanOptions,
+  GenerateOptions,
+} from './types.js';
+
 const DECORATOR_NAME = 'NexusRemote';
 
 /**
