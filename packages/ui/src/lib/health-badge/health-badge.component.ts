@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import type { RemoteHealthStatus } from '@bimo-nexus/core';
+import type { RemoteHealthStatus } from '@bimo-dk/nexus-core';
 
 @Component({
   selector: 'bimo-health-badge',

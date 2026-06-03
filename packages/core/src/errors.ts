@@ -1,7 +1,7 @@
 /**
  * Typed fejlklasse for alle fejl der kommer fra registry API.
  *
- * Kastes af RegistryClient i @bimo-nexus/client. Konsumenter kan gøre:
+ * Kastes af RegistryClient i @bimo-dk/nexus-client. Konsumenter kan gøre:
  *   try { await client.getRemotes(); }
  *   catch (err) { if (err instanceof RegistryError) { ... } }
  */

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule, type MatSlideToggleChange } from '@angular/material/slide-toggle';
-import type { RemoteConfig } from '@bimo-nexus/core';
+import type { RemoteConfig } from '@bimo-dk/nexus-core';
 import { HealthBadgeComponent } from '../health-badge/health-badge.component';
 
 @Component({

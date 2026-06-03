@@ -1,4 +1,4 @@
-import { NEXUS_DEFAULTS, type WebSocketMessage } from '@bimo-nexus/core';
+import { NEXUS_DEFAULTS, type WebSocketMessage } from '@bimo-dk/nexus-core';
 
 export interface RegistryWebSocketOptions {
   /** Base URL til registry/proxy — bruges til at udlede ws://...:port/ws. */

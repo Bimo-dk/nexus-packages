@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { isValidRemoteName, isValidRoutePath } from '@bimo-nexus/core';
+import { isValidRemoteName, isValidRoutePath } from '@bimo-dk/nexus-core';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 

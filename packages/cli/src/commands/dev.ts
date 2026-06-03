@@ -19,12 +19,12 @@ export async function dev(): Promise<void> {
   console.log('');
 
   // Try to find dev-proxy from a couple of well-known locations:
-  // 1. ./node_modules/@bimo-nexus/dev-proxy/dist/proxy-server.cjs (future package)
+  // 1. ./node_modules/@bimo-dk/nexus-dev-proxy/dist/proxy-server.cjs (future package)
   // 2. ../../dev-tools/proxy-server.ts (when running inside nexus monorepo)
   // 3. Fallback: instruct user to install nexus-proxy separately.
 
   const candidates = [
-    path.join(cwd, 'node_modules', '@bimo-nexus', 'dev-proxy', 'dist', 'proxy-server.cjs'),
+    path.join(cwd, 'node_modules', '@bimo-dk', 'nexus-dev-proxy', 'dist', 'proxy-server.cjs'),
     path.join(cwd, 'dev-tools', 'proxy-server.ts'),
   ];
 
@@ -43,6 +43,6 @@ export async function dev(): Promise<void> {
   }
 
   console.error(chalk.red('✗ Could not locate dev-proxy server.'));
-  console.error(chalk.dim('  Install @bimo-nexus/dev-proxy or place dev-tools/proxy-server.ts in cwd.'));
+  console.error(chalk.dim('  Install @bimo-dk/nexus-dev-proxy or place dev-tools/proxy-server.ts in cwd.'));
   process.exit(1);
 }

@@ -1,11 +1,11 @@
-# @bimo-nexus/cli
+# @bimo-dk/nexus-cli
 
 `bnx` — kommandolinje-værktøj til Bimo-Nexus.
 
 ## Installation
 
 ```bash
-npm install -g @bimo-nexus/cli
+npm install -g @bimo-dk/nexus-cli
 ```
 
 ## Kommandoer

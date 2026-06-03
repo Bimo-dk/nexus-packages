@@ -6,11 +6,11 @@ Turborepo monorepo med kerne-pakkerne til **Bimo-Nexus** micro frontend-platform
 
 | Pakke | Beskrivelse |
 |---|---|
-| **`@bimo-nexus/core`** | TypeScript typer + konstanter. Single source of truth. Ingen runtime deps. |
-| **`@bimo-nexus/client`** | RegistryClient + RegistryWebSocket — HTTP/WS klient til registry API. |
-| **`@bimo-nexus/ui`** | Angular 19 komponent-bibliotek (HealthBadge, OfflineBanner, LoadingSpinner, RemoteStatusCard). |
-| **`@bimo-nexus/testing`** | Mock-fabrikker + in-memory MockRegistryServer + Angular test helpers. |
-| **`@bimo-nexus/cli`** | `bnx` kommandolinje-værktøj til generate, publish, status, health, dev. |
+| **`@bimo-dk/nexus-core`** | TypeScript typer + konstanter. Single source of truth. Ingen runtime deps. |
+| **`@bimo-dk/nexus-client`** | RegistryClient + RegistryWebSocket — HTTP/WS klient til registry API. |
+| **`@bimo-dk/nexus-ui`** | Angular 19 komponent-bibliotek (HealthBadge, OfflineBanner, LoadingSpinner, RemoteStatusCard). |
+| **`@bimo-dk/nexus-testing`** | Mock-fabrikker + in-memory MockRegistryServer + Angular test helpers. |
+| **`@bimo-dk/nexus-cli`** | `bnx` kommandolinje-værktøj til generate, publish, status, health, dev. |
 
 ## Afhængigheder mellem pakker
 
@@ -67,10 +67,10 @@ Hvis du arbejder på en pakke parallelt med et andet repo (fx `nexus-example`), 
 cd packages/core && npm link
 
 # I dit forbrugende repo (fx nexus-example/host-template)
-npm link @bimo-nexus/core
+npm link @bimo-dk/nexus-core
 
 # Når du er færdig:
-npm unlink @bimo-nexus/core
+npm unlink @bimo-dk/nexus-core
 ```
 
 ## Environment variables
@@ -101,7 +101,7 @@ Efter publish kan disse repos peg på pakkerne:
 
 | Repo | Pakker |
 |---|---|
-| `nexus-example/nexus-registry` | `@bimo-nexus/core` |
-| `nexus-example/host-template` | `@bimo-nexus/core`, `@bimo-nexus/client`, `@bimo-nexus/ui` |
-| `nexus-example/nexus-portal` | `@bimo-nexus/core`, `@bimo-nexus/client`, `@bimo-nexus/ui` |
-| `nexus-example/remote-templat` | `@bimo-nexus/core`, `@bimo-nexus/ui` |
+| `nexus-example/nexus-registry` | `@bimo-dk/nexus-core` |
+| `nexus-example/host-template` | `@bimo-dk/nexus-core`, `@bimo-dk/nexus-client`, `@bimo-dk/nexus-ui` |
+| `nexus-example/nexus-portal` | `@bimo-dk/nexus-core`, `@bimo-dk/nexus-client`, `@bimo-dk/nexus-ui` |
+| `nexus-example/remote-templat` | `@bimo-dk/nexus-core`, `@bimo-dk/nexus-ui` |

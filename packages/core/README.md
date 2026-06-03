@@ -1,11 +1,11 @@
-# @bimo-nexus/core
+# @bimo-dk/nexus-core
 
 TypeScript-typer, konstanter og validators til Bimo-Nexus platformen. Ingen runtime dependencies — kun TypeScript.
 
 ## Installation
 
 ```bash
-npm install @bimo-nexus/core
+npm install @bimo-dk/nexus-core
 ```
 
 ## Brug
@@ -17,7 +17,7 @@ import {
   NEXUS_DEFAULTS,
   RegistryError,
   isValidRemoteName,
-} from '@bimo-nexus/core';
+} from '@bimo-dk/nexus-core';
 
 if (isValidRemoteName('myRemote')) {
   // ...

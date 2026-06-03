@@ -1,4 +1,4 @@
-# @bimo-nexus/testing
+# @bimo-dk/nexus-testing
 
 Test utilities, mock fabrikker og in-memory MockRegistryServer for Bimo-Nexus.
 
@@ -7,7 +7,7 @@ Test utilities, mock fabrikker og in-memory MockRegistryServer for Bimo-Nexus.
 ## Installation
 
 ```bash
-npm install -D @bimo-nexus/testing
+npm install -D @bimo-dk/nexus-testing
 ```
 
 ## Eksempler
@@ -15,7 +15,7 @@ npm install -D @bimo-nexus/testing
 ### Mock factories
 
 ```typescript
-import { createMockRemoteConfig, createMockRegistryResponse } from '@bimo-nexus/testing';
+import { createMockRemoteConfig, createMockRegistryResponse } from '@bimo-dk/nexus-testing';
 
 const remote = createMockRemoteConfig({ name: 'checkout' });
 const response = createMockRegistryResponse(5); // 5 mock remotes
@@ -24,8 +24,8 @@ const response = createMockRegistryResponse(5); // 5 mock remotes
 ### MockRegistryServer (integrationstests)
 
 ```typescript
-import { MockRegistryServer } from '@bimo-nexus/testing';
-import { RegistryClient } from '@bimo-nexus/client';
+import { MockRegistryServer } from '@bimo-dk/nexus-testing';
+import { RegistryClient } from '@bimo-dk/nexus-client';
 
 let server: MockRegistryServer;
 let client: RegistryClient;
@@ -51,7 +51,7 @@ it('roundtrips a remote', async () => {
 ### createMockRegistryClient (unit tests)
 
 ```typescript
-import { createMockRegistryClient, createMockRemoteConfig } from '@bimo-nexus/testing';
+import { createMockRegistryClient, createMockRemoteConfig } from '@bimo-dk/nexus-testing';
 
 const mockClient = createMockRegistryClient([
   createMockRemoteConfig({ name: 'checkout' }),
@@ -64,8 +64,8 @@ expect(remotes).toHaveLength(1);
 ### Angular TestBed integration
 
 ```typescript
-import { provideMockRegistry } from '@bimo-nexus/testing/angular';
-import { RegistryClient } from '@bimo-nexus/client';
+import { provideMockRegistry } from '@bimo-dk/nexus-testing/angular';
+import { RegistryClient } from '@bimo-dk/nexus-client';
 
 TestBed.configureTestingModule({
   providers: [provideMockRegistry(RegistryClient, [createMockRemoteConfig()])],

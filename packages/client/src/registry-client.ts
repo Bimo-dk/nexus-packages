@@ -6,7 +6,7 @@ import {
   type RegistryResponse,
   type RemoteConfig,
   type UpdateRemoteRequest,
-} from '@bimo-nexus/core';
+} from '@bimo-dk/nexus-core';
 import { nextRequestId } from './correlation.js';
 
 export interface RegistryClientOptions {

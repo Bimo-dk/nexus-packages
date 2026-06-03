@@ -1,7 +1,7 @@
 import http from 'node:http';
 import express, { type Request, type Response } from 'express';
 import { WebSocketServer, WebSocket } from 'ws';
-import { NEXUS_DEFAULTS, type RemoteConfig, type WebSocketMessage } from '@bimo-nexus/core';
+import { NEXUS_DEFAULTS, type RemoteConfig, type WebSocketMessage } from '@bimo-dk/nexus-core';
 import { createMockRegistryResponse } from './mock-remote-config.js';
 
 export interface MockRegistryServerOptions {

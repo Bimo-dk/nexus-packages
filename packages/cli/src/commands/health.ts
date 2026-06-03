@@ -1,4 +1,4 @@
-import { RegistryClient, type HealthStatus } from '@bimo-nexus/client';
+import { RegistryClient, type HealthStatus } from '@bimo-dk/nexus-client';
 import chalk from 'chalk';
 
 export async function health(): Promise<void> {

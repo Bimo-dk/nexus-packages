@@ -1,5 +1,5 @@
 {
-  "name": "@bimo-nexus/testing",
+  "name": "@bimo-dk/nexus-testing",
   "version": "0.1.0",
   "description": "Test utilities, mock factories og in-memory MockRegistryServer for Bimo-Nexus",
   "license": "MIT",
@@ -37,8 +37,8 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@bimo-nexus/core": "*",
-    "@bimo-nexus/client": "*",
+    "@bimo-dk/nexus-core": "*",
+    "@bimo-dk/nexus-client": "*",
     "express": "^5.0.1",
     "ws": "^8.18.0"
   },

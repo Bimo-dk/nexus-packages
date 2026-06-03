@@ -1,17 +1,17 @@
-# @bimo-nexus/client
+# @bimo-dk/nexus-client
 
 HTTP + WebSocket klient til Bimo-Nexus registry API.
 
 ## Installation
 
 ```bash
-npm install @bimo-nexus/client
+npm install @bimo-dk/nexus-client
 ```
 
 ## RegistryClient
 
 ```typescript
-import { RegistryClient } from '@bimo-nexus/client';
+import { RegistryClient } from '@bimo-dk/nexus-client';
 
 const client = new RegistryClient({
   registryUrl: 'http://localhost:3000',
@@ -38,7 +38,7 @@ const health = await client.checkHealth('http://remote-one/health');
 ## RegistryWebSocket
 
 ```typescript
-import { RegistryWebSocket } from '@bimo-nexus/client';
+import { RegistryWebSocket } from '@bimo-dk/nexus-client';
 
 const ws = new RegistryWebSocket({
   registryUrl: 'http://localhost:3000',
@@ -60,8 +60,8 @@ Auto-reconnect med exponential backoff (1s → 2s → 4s → ... → 30s max).
 
 ## Re-exports
 
-Alle typer + konstanter fra `@bimo-nexus/core` er re-eksporteret så du kun behøver én import:
+Alle typer + konstanter fra `@bimo-dk/nexus-core` er re-eksporteret så du kun behøver én import:
 
 ```typescript
-import { RegistryClient, RemoteConfig, NEXUS_DEFAULTS } from '@bimo-nexus/client';
+import { RegistryClient, RemoteConfig, NEXUS_DEFAULTS } from '@bimo-dk/nexus-client';
 ```

@@ -6,7 +6,7 @@ export type { RegistryWebSocketOptions } from './registry-websocket.js';
 
 export { getSessionId, nextRequestId } from './correlation.js';
 
-// Re-export af core typer så konsumenter kun behøver importere fra @bimo-nexus/client
+// Re-export af core typer så konsumenter kun behøver importere fra @bimo-dk/nexus-client
 export type {
   RemoteHealthStatus,
   RemoteConfig,
@@ -16,5 +16,5 @@ export type {
   AddRemoteRequest,
   UpdateRemoteRequest,
   NexusDefaults,
-} from '@bimo-nexus/core';
-export { NEXUS_DEFAULTS, RegistryError, isValidRemoteName, isValidRoutePath, isValidUrl } from '@bimo-nexus/core';
+} from '@bimo-dk/nexus-core';
+export { NEXUS_DEFAULTS, RegistryError, isValidRemoteName, isValidRoutePath, isValidUrl } from '@bimo-dk/nexus-core';

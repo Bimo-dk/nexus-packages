@@ -2,7 +2,7 @@
  * Bimo-Nexus platform defaults. Frozen så de ikke kan muteres ved runtime.
  *
  * Alle ports og headers er aftalte konventioner på tværs af services.
- * Bumpr major version på @bimo-nexus/core hvis nogen af disse værdier ændres.
+ * Bumpr major version på @bimo-dk/nexus-core hvis nogen af disse værdier ændres.
  */
 export const NEXUS_DEFAULTS = Object.freeze({
   REGISTRY_PORT: 3000,

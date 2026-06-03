@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { RegistryClient } from './registry-client.js';
-import { RegistryError } from '@bimo-nexus/core';
+import { RegistryError } from '@bimo-dk/nexus-core';
 
 function mockFetch(responses: Array<{ ok: boolean; status: number; body: unknown }>): typeof fetch {
   let i = 0;

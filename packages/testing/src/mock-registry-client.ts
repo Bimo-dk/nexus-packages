@@ -1,5 +1,5 @@
-import type { RegistryClient } from '@bimo-nexus/client';
-import type { HealthStatus, RemoteConfig } from '@bimo-nexus/core';
+import type { RegistryClient } from '@bimo-dk/nexus-client';
+import type { HealthStatus, RemoteConfig } from '@bimo-dk/nexus-core';
 import { createMockRemoteConfig } from './mock-remote-config.js';
 
 type MockFn<T extends (...args: never[]) => unknown> = T & {

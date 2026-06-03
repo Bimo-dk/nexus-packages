@@ -44,10 +44,10 @@ jobs:
         run: npm ci
 
       - name: Build target package
-        run: npm run build --workspace=@bimo-nexus/${{ inputs.package }}
+        run: npm run build --workspace=@bimo-dk/nexus-${{ inputs.package }}
 
       - name: Test target package
-        run: npm test --workspace=@bimo-nexus/${{ inputs.package }}
+        run: npm test --workspace=@bimo-dk/nexus-${{ inputs.package }}
 
       - name: Set version
         working-directory: packages/${{ inputs.package }}
@@ -67,7 +67,7 @@ jobs:
             await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: `@bimo-nexus/${{ inputs.package }}@${{ inputs.version }}`,
-              name: `@bimo-nexus/${{ inputs.package }} v${{ inputs.version }}`,
+              tag_name: `@bimo-dk/nexus-${{ inputs.package }}@${{ inputs.version }}`,
+              name: `@bimo-dk/nexus-${{ inputs.package }} v${{ inputs.version }}`,
               body: 'Manual hotfix release triggered via workflow_dispatch.',
             });

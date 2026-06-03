@@ -1,4 +1,4 @@
-import type { RegistryResponse, RemoteConfig } from '@bimo-nexus/core';
+import type { RegistryResponse, RemoteConfig } from '@bimo-dk/nexus-core';
 
 /**
  * Opretter et komplet RemoteConfig med fornuftige default-værdier.

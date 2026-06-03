@@ -1,5 +1,5 @@
 {
-  "name": "@bimo-nexus/cli",
+  "name": "@bimo-dk/nexus-cli",
   "version": "0.1.0",
   "description": "bnx — Bimo-Nexus kommandolinje-værktøj til generate, publish, status, health, dev",
   "license": "MIT",
@@ -26,8 +26,8 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@bimo-nexus/core": "*",
-    "@bimo-nexus/client": "*",
+    "@bimo-dk/nexus-core": "*",
+    "@bimo-dk/nexus-client": "*",
     "chalk": "^5.3.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.7",

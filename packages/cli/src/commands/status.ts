@@ -1,4 +1,4 @@
-import { RegistryClient, type RemoteConfig, type RemoteHealthStatus } from '@bimo-nexus/client';
+import { RegistryClient, type RemoteConfig, type RemoteHealthStatus } from '@bimo-dk/nexus-client';
 import chalk from 'chalk';
 
 export async function status(): Promise<void> {

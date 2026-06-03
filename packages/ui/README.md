@@ -1,11 +1,11 @@
-# @bimo-nexus/ui
+# @bimo-dk/nexus-ui
 
 Angular 19 komponent-bibliotek til Bimo-Nexus. Standalone-komponenter med Angular Material under hjælmen.
 
 ## Installation
 
 ```bash
-npm install @bimo-nexus/ui @angular/material @angular/cdk
+npm install @bimo-dk/nexus-ui @angular/material @angular/cdk
 ```
 
 ## Komponenter
@@ -13,7 +13,7 @@ npm install @bimo-nexus/ui @angular/material @angular/cdk
 ### `<bimo-health-badge>`
 
 ```typescript
-import { HealthBadgeComponent } from '@bimo-nexus/ui';
+import { HealthBadgeComponent } from '@bimo-dk/nexus-ui';
 
 @Component({
   imports: [HealthBadgeComponent],

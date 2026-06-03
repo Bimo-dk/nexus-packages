@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { RegistryClient, RegistryError } from '@bimo-nexus/client';
+import { RegistryClient, RegistryError } from '@bimo-dk/nexus-client';
 import chalk from 'chalk';
 
 interface FederationConfig {

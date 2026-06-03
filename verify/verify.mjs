@@ -3,9 +3,9 @@
  * Post-publish smoke test. Importer hver pakke og bekræft at de vigtigste exports
  * faktisk er tilgængelige. Køres af publish.yml efter Changesets har publishet.
  *
- * Bemærk: @bimo-nexus/ui kan ikke testes her uden Angular runtime — UI-pakken
+ * Bemærk: @bimo-dk/nexus-ui kan ikke testes her uden Angular runtime — UI-pakken
  * smoke-testes separat via build-tjek i CI.
- * @bimo-nexus/testing og @bimo-nexus/cli installeres typisk som devDeps og verificeres
+ * @bimo-dk/nexus-testing og @bimo-dk/nexus-cli installeres typisk som devDeps og verificeres
  * via deres egen test-suite før publish.
  */
 
@@ -26,8 +26,8 @@ function check(name, fn) {
   }
 }
 
-console.log('\n=== @bimo-nexus/core ===\n');
-const core = await import('@bimo-nexus/core');
+console.log('\n=== @bimo-dk/nexus-core ===\n');
+const core = await import('@bimo-dk/nexus-core');
 check('NEXUS_DEFAULTS.TOKEN_HEADER == "X-Bimo-Token"', () => {
   assert.equal(core.NEXUS_DEFAULTS.TOKEN_HEADER, 'X-Bimo-Token');
 });
@@ -44,8 +44,8 @@ check('RegistryError preserves correlationId', () => {
   assert.equal(err.correlationId, 'req-123');
 });
 
-console.log('\n=== @bimo-nexus/client ===\n');
-const client = await import('@bimo-nexus/client');
+console.log('\n=== @bimo-dk/nexus-client ===\n');
+const client = await import('@bimo-dk/nexus-client');
 check('RegistryClient constructor requires url+token', () => {
   assert.throws(() => new client.RegistryClient({ registryUrl: '', token: '' }));
 });

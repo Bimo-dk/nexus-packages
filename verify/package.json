@@ -8,7 +8,7 @@
     "verify": "node verify.mjs"
   },
   "dependencies": {
-    "@bimo-nexus/core": "latest",
-    "@bimo-nexus/client": "latest"
+    "@bimo-dk/nexus-core": "latest",
+    "@bimo-dk/nexus-client": "latest"
   }
 }
