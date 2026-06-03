@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
       id-token: write
     steps:
       - name: Checkout
@@ -38,7 +39,8 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@bimo-nexus'
 
       - name: Install dependencies
         run: npm ci
@@ -53,12 +55,11 @@ jobs:
         working-directory: packages/${{ inputs.package }}
         run: npm version ${{ inputs.version }} --no-git-tag-version
 
-      - name: Publish to npm
+      - name: Publish to GitHub Packages
         working-directory: packages/${{ inputs.package }}
-        run: npm publish --access public --tag ${{ inputs.tag }}
+        run: npm publish --tag ${{ inputs.tag }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: 'true'
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub release
         uses: actions/github-script@v7
