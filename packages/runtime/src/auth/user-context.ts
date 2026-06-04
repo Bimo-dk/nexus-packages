@@ -1,4 +1,4 @@
-import { InjectionToken, type Signal } from '@angular/core';
+import { InjectionToken, signal, type Signal } from '@angular/core';
 
 /** Subset of user info every federated component can safely depend on. */
 export interface UserContext {
@@ -32,6 +32,29 @@ export interface UserContext {
  *   template: `@if (user(); as u) { Hello, {{ u.name }} }`
  */
 export const USER_CONTEXT = new InjectionToken<Signal<UserContext | null>>('USER_CONTEXT');
+
+const g = globalThis as Record<string, unknown>;
+const USER_SIGNAL_KEY = '__nexus_user_signal__';
+const NULL_USER: Signal<UserContext | null> = signal(null).asReadonly();
+
+/**
+ * Register the host's user signal so federated remotes can read it via
+ * getUserSignal(). Call this once in the host shell before federation loads.
+ * Uses globalThis so all bundles (host + remotes) share the same signal
+ * regardless of module identity.
+ */
+export function setUserSignal(s: Signal<UserContext | null>): void {
+  g[USER_SIGNAL_KEY] = s;
+}
+
+/**
+ * Read the user signal registered by the host via setUserSignal().
+ * Returns a null signal if no host has registered one yet.
+ * Safe to call from any federated remote.
+ */
+export function getUserSignal(): Signal<UserContext | null> {
+  return (g[USER_SIGNAL_KEY] as Signal<UserContext | null> | undefined) ?? NULL_USER;
+}
 
 /** True if the user holds at least one of the required roles. */
 export function userHasAnyRole(user: UserContext | null, required: readonly string[]): boolean {

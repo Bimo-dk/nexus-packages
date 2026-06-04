@@ -15,6 +15,7 @@ export { NEXUS_CONFIG } from './tokens';
 // Services
 export { SelfRegisterService } from './self-register.service';
 export { DynamicNexusService } from './host/dynamic-nexus.service';
+export { HealthService } from './host/health.service';
 export { RegistryService } from './host/registry.service';
 export { RegistryWebSocketService } from './host/registry-websocket.service';
 export { ComponentLoaderService } from './host/component-loader.service';
@@ -37,7 +38,7 @@ export { nexusAuthInterceptor } from './interceptors/nexus-auth.interceptor';
 export { bearerTokenInterceptor } from './auth/bearer-token.interceptor';
 
 // Auth
-export { USER_CONTEXT, userHasAnyRole, userHasAllRoles, type UserContext } from './auth/user-context';
+export { USER_CONTEXT, userHasAnyRole, userHasAllRoles, setUserSignal, getUserSignal, type UserContext } from './auth/user-context';
 export { NEXUS_AUTH, type NexusAuthService } from './auth/auth.service';
 export { requireRole, requireAuth } from './auth/role-guard';
 
