@@ -41,7 +41,8 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com",
+    "directory": "dist"
   },
   "engines": {
     "node": ">=22.0.0"
