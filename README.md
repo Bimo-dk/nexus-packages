@@ -79,7 +79,7 @@ npm unlink @bimo-dk/nexus-core
 |---|---|---|
 | `NPM_TOKEN` | GitHub Actions secret | npm registry token for `changeset publish` |
 | `GITHUB_TOKEN` | Auto (GitHub Actions) | Creates releases + posts PR comments |
-| `BIMO_TOKEN` | Local `.env` / CI secret | Used by `bnx` CLI for registry calls |
+| `NEXUS_TOKEN` | Local `.env` / CI secret | Used by `bnx` CLI for registry calls |
 | `REGISTRY_URL` | Local `.env` / CI secret | Where `bnx` calls the registry (default `http://localhost:3000`) |
 | `REMOTE_URL` | Set per publish | URL where the remote's remoteEntry.json is hosted |
 

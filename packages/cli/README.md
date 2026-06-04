@@ -125,7 +125,7 @@ Bimo-Nexus dev — status
 
 ## Environment variables (publish/status/health commands)
 
-- `BIMO_TOKEN` — required for publish/status/health
+- `NEXUS_TOKEN` — required for publish/status/health
 - `REGISTRY_URL` — default `http://localhost:3000`
 - `REMOTE_URL` — URL that gets published (default `/remotes/<name>/remoteEntry.json`)
 - `REMOTE_ROUTE` — override of route (default derived from name)
@@ -144,7 +144,7 @@ bnx generate remote
 cd checkout && npm install && npm run build
 
 # 3. Publish
-export BIMO_TOKEN=your-secret
+export NEXUS_TOKEN=your-secret
 export REGISTRY_URL=http://localhost:3000
 bnx publish
 # -> ✓ Registered "checkout"

@@ -22,9 +22,9 @@ export async function publish(): Promise<void> {
   }
 
   const registryUrl = process.env.REGISTRY_URL ?? 'http://localhost:3000';
-  const token = process.env.BIMO_TOKEN;
+  const token = process.env.NEXUS_TOKEN;
   if (!token) {
-    console.error(chalk.red('âœ— BIMO_TOKEN environment variable is required'));
+    console.error(chalk.red('âœ— NEXUS_TOKEN environment variable is required'));
     process.exit(1);
   }
 
@@ -34,7 +34,7 @@ export async function publish(): Promise<void> {
 
   const client = new RegistryClient({ registryUrl, token });
 
-  console.log(chalk.cyan(`âae’ Publishing "${config.name}" to ${registryUrl}/api/remotes`));
+  console.log(chalk.cyan(`ï¿½aeï¿½ Publishing "${config.name}" to ${registryUrl}/api/remotes`));
   console.log(chalk.dim(`  url=${remoteUrl} route=${routePath} exposedModule=${exposedModule}`));
 
   try {

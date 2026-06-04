@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "@bimo-dk/nexus-bus",
   "version": "0.2.0",
   "description": "Typed publish/subscribe + request/response event bus for Bimo-Nexus federated components",

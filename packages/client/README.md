@@ -15,7 +15,7 @@ import { RegistryClient } from '@bimo-dk/nexus-client';
 
 const client = new RegistryClient({
   registryUrl: 'http://localhost:3000',
-  token: process.env.BIMO_TOKEN!,
+  token: process.env.NEXUS_TOKEN!,
 });
 
 // Read
@@ -42,7 +42,7 @@ import { RegistryWebSocket } from '@bimo-dk/nexus-client';
 
 const ws = new RegistryWebSocket({
   registryUrl: 'http://localhost:3000',
-  token: process.env.BIMO_TOKEN!,
+  token: process.env.NEXUS_TOKEN!,
 });
 
 ws.onMessage((msg) => {
