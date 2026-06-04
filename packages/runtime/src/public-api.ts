@@ -34,6 +34,12 @@ export { nexusRoute, nexusRoutes, loadFromRemote, type NexusRouteSpec } from './
 // Interceptors (for advanced wiring)
 export { correlationIdInterceptor } from './interceptors/correlation-id.interceptor';
 export { nexusAuthInterceptor } from './interceptors/nexus-auth.interceptor';
+export { bearerTokenInterceptor } from './auth/bearer-token.interceptor';
+
+// Auth
+export { USER_CONTEXT, userHasAnyRole, userHasAllRoles, type UserContext } from './auth/user-context';
+export { NEXUS_AUTH, type NexusAuthService } from './auth/auth.service';
+export { requireRole, requireAuth } from './auth/role-guard';
 
 // Utilities
 export { loadRuntimeConfig } from './config-loader';
