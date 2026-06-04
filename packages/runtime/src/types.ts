@@ -14,6 +14,8 @@ export interface NexusRuntimeConfig {
   configAssetPath?: string;
   /** Override the public URL this remote announces (auto-derived from window.location if omitted). */
   publicUrl?: string;
+  /** Internal Docker/container URL the gateway uses to proxy traffic to this remote. */
+  upstreamUrl?: string;
   /** Static backup JSON for host fallback chain. Default '/assets/registry-backup/remotes.json'. */
   staticBackupUrl?: string;
 }
