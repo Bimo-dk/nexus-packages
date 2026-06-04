@@ -3,9 +3,9 @@ import chalk from 'chalk';
 
 export async function status(): Promise<void> {
   const registryUrl = process.env.REGISTRY_URL ?? 'http://localhost:3000';
-  const token = process.env.BIMO_TOKEN;
+  const token = process.env.NEXUS_TOKEN;
   if (!token) {
-    console.error(chalk.red('✗ BIMO_TOKEN environment variable is required'));
+    console.error(chalk.red('✗ NEXUS_TOKEN environment variable is required'));
     process.exit(1);
   }
 

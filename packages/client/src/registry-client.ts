@@ -12,7 +12,7 @@ import { nextRequestId } from './correlation.js';
 export interface RegistryClientOptions {
   /** Base URL to registry, e.g. 'http://localhost:3000' or '/api'. Trailing slash is trimmed. */
   registryUrl: string;
-  /** Token for the X-Bimo-Token header. Required for write endpoints. */
+  /** Token for the X-Nexus-Token header. Required for write endpoints. */
   token: string;
   /**
    * Optional custom fetch (for testing / Node.js < 18). Default = globalThis.fetch.
@@ -21,10 +21,10 @@ export interface RegistryClientOptions {
 }
 
 /**
- * HTTP client for the Bimo-Nexus registry API.
+ * HTTP client for the Nexus registry API.
  *
  * Example:
- *   const client = new RegistryClient({ registryUrl: '/api', token: process.env.BIMO_TOKEN });
+ *   const client = new RegistryClient({ registryUrl: '/api', token: process.env.NEXUS_TOKEN });
  *   const remotes = await client.getRemotes();
  */
 export class RegistryClient {

@@ -9,7 +9,7 @@ export const NEXUS_DEFAULTS = Object.freeze({
   HOST_PORT: 4000,
   APP_PORT: 80,
   PORTAL_PORT: 9000,
-  TOKEN_HEADER: 'X-Bimo-Token',
+  TOKEN_HEADER: 'X-Nexus-Token',
   REQUEST_ID_HEADER: 'X-Request-ID',
   WEBSOCKET_PATH: '/ws',
   CACHE_TTL_MS: 86_400_000, // 24h

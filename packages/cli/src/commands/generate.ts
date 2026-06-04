@@ -63,7 +63,7 @@ export async function generateRemote(opts: { name?: string; route?: string }): P
   console.log(`  cd ${name}`);
   console.log(`  npm install`);
   console.log(`  npm run build`);
-  console.log(`  BIMO_TOKEN=... bnx publish`);
+  console.log(`  NEXUS_TOKEN=... bnx publish`);
 }
 
 async function substituteTemplate(dir: string, name: string, route: string): Promise<void> {
