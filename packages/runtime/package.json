@@ -1,6 +1,6 @@
 {
   "name": "@bimo-dk/nexus-runtime",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Angular providers + services + components for Bimo-Nexus hosts and remotes",
   "license": "MIT",
   "repository": {
