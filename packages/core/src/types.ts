@@ -17,6 +17,8 @@ export interface RemoteConfig {
   lastHealthCheck?: string;
   /** Resultat af seneste health-check. */
   healthStatus?: RemoteHealthStatus;
+  /** Internal Docker/container URL used by the gateway to proxy traffic. */
+  upstreamUrl?: string;
 }
 
 export interface RegistryResponse {
@@ -42,6 +44,7 @@ export interface AddRemoteRequest {
   exposedModule?: string;
   routePath: string;
   enabled?: boolean;
+  upstreamUrl?: string;
 }
 
 export type UpdateRemoteRequest = Partial<Omit<RemoteConfig, 'name' | 'addedAt'>>;

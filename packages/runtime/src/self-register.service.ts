@@ -10,7 +10,11 @@ interface ResolvedRegistration {
   routePath: string;
   exposedModule: string;
   enabled: true;
+  upstreamUrl?: string;
 }
+
+const MAX_ATTEMPTS = 5;
+const BASE_DELAY_MS = 1000;
 
 @Injectable({ providedIn: 'root' })
 export class SelfRegisterService {
@@ -21,49 +25,58 @@ export class SelfRegisterService {
 
     const resolved = this.resolve(input);
     const url = `${this.cfg.registryUrl.replace(/\/$/, '')}/remotes`;
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (this.cfg.nexusToken) headers['X-Nexus-Token'] = this.cfg.nexusToken;
 
-    try {
-      const probe = await fetch(`${url}/${encodeURIComponent(resolved.name)}`, {
-        method: 'GET',
-        headers,
-        cache: 'no-store',
-      });
-      if (probe.ok) {
-        const res = await fetch(`${url}/${encodeURIComponent(resolved.name)}`, {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify({
-            url: resolved.url,
-            routePath: resolved.routePath,
-            exposedModule: resolved.exposedModule,
-            enabled: true,
-          }),
-        });
-        if (!res.ok) {
-          console.warn(`[nexus-runtime] Self-update failed: ${res.status} ${res.statusText}`);
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
+        await this.attemptRegister(resolved, url, headers);
+        return;
+      } catch (err) {
+        if (attempt === MAX_ATTEMPTS) {
+          console.warn('[nexus-runtime] Self-registration failed after all retries:', err instanceof Error ? err.message : err);
           return;
         }
-        console.log(`[nexus-runtime] Self-updated registration for "${resolved.name}"`);
-        return;
+        const delay = BASE_DELAY_MS * 2 ** (attempt - 1);
+        console.warn(`[nexus-runtime] Registry not ready (attempt ${attempt}/${MAX_ATTEMPTS}), retrying in ${delay}ms`);
+        await new Promise(r => setTimeout(r, delay));
       }
-
-      const create = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(resolved),
-      });
-      if (!create.ok) {
-        console.warn(`[nexus-runtime] Self-register failed: ${create.status} ${create.statusText}`);
-        return;
-      }
-      console.log(`[nexus-runtime] Self-registered "${resolved.name}" at ${resolved.url}`);
-    } catch (err) {
-      console.warn('[nexus-runtime] Self-registration unavailable:', err instanceof Error ? err.message : err);
     }
+  }
+
+  private async attemptRegister(resolved: ResolvedRegistration, url: string, headers: Record<string, string>): Promise<void> {
+    const probe = await fetch(`${url}/${encodeURIComponent(resolved.name)}`, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+    });
+
+    if (probe.ok) {
+      const updateBody: Record<string, unknown> = {
+        url: resolved.url,
+        routePath: resolved.routePath,
+        exposedModule: resolved.exposedModule,
+        enabled: true,
+      };
+      if (resolved.upstreamUrl) updateBody['upstreamUrl'] = resolved.upstreamUrl;
+
+      const res = await fetch(`${url}/${encodeURIComponent(resolved.name)}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(updateBody),
+      });
+      if (!res.ok) throw new Error(`PUT ${res.status} ${res.statusText}`);
+      console.log(`[nexus-runtime] Self-updated registration for "${resolved.name}"`);
+      return;
+    }
+
+    const create = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(resolved),
+    });
+    if (!create.ok) throw new Error(`POST ${create.status} ${create.statusText}`);
+    console.log(`[nexus-runtime] Self-registered "${resolved.name}" at ${resolved.url}`);
   }
 
   private resolve(input: NexusRemoteConfig): ResolvedRegistration {
@@ -75,7 +88,8 @@ export class SelfRegisterService {
     const routePath = input.routePath ?? meta.route ?? deriveRouteFromName(name);
     const exposedModule = input.exposedModule ?? (meta.exposeAs ? `./${meta.exposeAs}` : './RemoteEntry');
     const url = input.url ?? this.cfg.publicUrl ?? this.deriveUrl();
-    return { name, url, routePath, exposedModule, enabled: true };
+    const upstreamUrl = this.cfg.upstreamUrl;
+    return { name, url, routePath, exposedModule, enabled: true, ...(upstreamUrl ? { upstreamUrl } : {}) };
   }
 
   private inferNameFromClass(entry: object): string | undefined {
