@@ -1,5 +1,34 @@
 # @bimo-dk/nexus-runtime
 
+## 0.3.0
+
+### Minor Changes
+
+- b7e165b: Fix ng-packagr packages publishing from source root instead of compiled dist.
+
+  Added `publishConfig.directory: "dist"` so Changesets publishes the ng-packagr
+  output in `dist/` rather than the TypeScript source root. Without this, consumers
+  got no `types`, `exports`, or compiled JS — only raw source files.
+
+  Also re-ships `nexus-runtime` with the user-signal bridge: `setUserSignal` and
+  `getUserSignal` let hosts register a shared user signal that federated remotes
+  can read across bundle boundaries via `globalThis`.
+
+### Patch Changes
+
+- b3798da: Add upstreamUrl field and retry logic for dynamic remote routing.
+
+  RemoteConfig and AddRemoteRequest gain an optional upstreamUrl field so the
+  gateway knows the internal Docker URL to proxy traffic through. NexusRuntimeConfig
+  also exposes upstreamUrl so remotes can announce it on self-registration.
+
+  SelfRegisterService now retries with exponential backoff (up to 5 attempts,
+  starting at 1 s) so remotes that start before the registry is ready still
+  register successfully instead of silently dropping.
+
+- Updated dependencies [b3798da]
+  - @bimo-dk/nexus-core@0.1.1
+
 ## 0.2.0
 
 ### Minor Changes
