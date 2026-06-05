@@ -34,9 +34,7 @@
     "clean": {
       "cache": false,
       "outputs": []
-    }
-  },
-  "pipeline": {
+    },
     "@bimo-dk/nexus-runtime-core#build": {
       "dependsOn": ["@bimo-dk/nexus-core#build", "@bimo-dk/nexus-client#build"]
     },

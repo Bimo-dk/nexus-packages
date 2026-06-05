@@ -41,9 +41,7 @@ export function createNexusPlugin(options: NexusPluginOptions): NexusPlugin {
   }
 
   ws.onMessage((msg) => {
-    if (msg.type === 'connected') {
-      void syncRemotes(msg.remotes);
-    } else if (msg.type === 'registry_updated') {
+    if (msg.type === 'remotes_changed') {
       void syncRemotes(msg.remotes);
     }
   });

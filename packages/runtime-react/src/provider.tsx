@@ -37,8 +37,7 @@ export function NexusProvider({ registryUrl, token, staticBackupUrl, children }:
     }
 
     const unsub = ws.onMessage((msg) => {
-      if (msg.type === 'connected') syncRemotes(msg.remotes);
-      else if (msg.type === 'registry_updated') syncRemotes(msg.remotes);
+      if (msg.type === 'remotes_changed') syncRemotes(msg.remotes);
     });
 
     client.getRemotes()

@@ -44,7 +44,7 @@ export class NexusError extends RegistryError {
     Object.setPrototypeOf(this, NexusError.prototype);
   }
 
-  toJSON(): { name: string; message: string; statusCode: number; errorCode: string; correlationId?: string } {
+  override toJSON(): { name: string; message: string; statusCode: number; errorCode: string; correlationId?: string } {
     return {
       ...super.toJSON(),
       errorCode: this.errorCode,

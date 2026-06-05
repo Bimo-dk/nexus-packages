@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// NexusLoader is mocked at module level
-const mockLoadRemoteModule = vi.fn();
+const mockLoadRemoteModule = vi.hoisted(() => vi.fn());
 vi.mock('@bimo-dk/nexus-runtime-core', () => ({
   NexusLoader: class {
     loadRemoteModule = mockLoadRemoteModule;

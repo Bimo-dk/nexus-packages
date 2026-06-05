@@ -42,30 +42,30 @@ export function createMockHost(overrides: Partial<HostConfig> = {}): HostConfig 
     name,
     url: overrides.url ?? `http://localhost:4000`,
     framework: overrides.framework ?? 'angular',
-    remote_entry: overrides.remote_entry ?? '/host/remoteEntry.json',
-    exposed_module: overrides.exposed_module ?? './AppShell',
+    remoteEntry: overrides.remoteEntry ?? '/host/remoteEntry.json',
+    exposedModule: overrides.exposedModule ?? './AppShell',
     enabled: overrides.enabled ?? true,
-    created_at: overrides.created_at ?? '2026-01-01T00:00:00.000Z',
-    updated_at: overrides.updated_at ?? '2026-01-01T00:00:00.000Z',
-    gate_count: overrides.gate_count ?? 0,
+    createdAt: overrides.createdAt ?? '2026-01-01T00:00:00.000Z',
+    updatedAt: overrides.updatedAt ?? '2026-01-01T00:00:00.000Z',
+    gateCount: overrides.gateCount ?? 0,
   };
 }
 
 /**
  * Creates a complete GateConfig with an embedded mock HostConfig.
  */
-export function createMockGate(overrides: Partial<GateConfig & { host_id?: string }> = {}): GateConfig {
+export function createMockGate(overrides: Partial<GateConfig & { hostId?: string }> = {}): GateConfig {
   const name = overrides.name ?? 'mockGate';
   const host = overrides.host ?? createMockHost();
   return {
     id: overrides.id ?? `gate-${name}`,
     name,
     domain: overrides.domain ?? 'mock.example.com',
-    host_id: overrides.host_id ?? host.id,
+    hostId: overrides.hostId ?? host.id,
     host,
     enabled: overrides.enabled ?? true,
-    created_at: overrides.created_at ?? '2026-01-01T00:00:00.000Z',
-    updated_at: overrides.updated_at ?? '2026-01-01T00:00:00.000Z',
+    createdAt: overrides.createdAt ?? '2026-01-01T00:00:00.000Z',
+    updatedAt: overrides.updatedAt ?? '2026-01-01T00:00:00.000Z',
   };
 }
 
@@ -74,21 +74,21 @@ export function createMockGate(overrides: Partial<GateConfig & { host_id?: strin
  */
 export function createMockProtectionConfig(overrides: Partial<ProtectionConfig> = {}): ProtectionConfig {
   return {
-    rate_limit_enabled: false,
-    rate_limit_requests_per_second: 100,
-    rate_limit_burst: 200,
-    rate_limit_by: 'ip',
-    max_connections_per_ip: 100,
-    max_websocket_connections_per_ip: 10,
-    request_timeout_ms: 30_000,
-    header_read_timeout_ms: 5_000,
-    body_read_timeout_ms: 10_000,
-    idle_timeout_ms: 60_000,
-    max_body_bytes: 1_048_576,
-    max_header_bytes: 8_192,
-    slowloris_timeout_ms: 10_000,
-    ban_duration_seconds: 3_600,
-    ban_threshold_violations: 10,
+    rateLimitEnabled: false,
+    rateLimitRequestsPerSecond: 100,
+    rateLimitBurst: 200,
+    rateLimitBy: 'ip',
+    maxConnectionsPerIp: 100,
+    maxWebsocketConnectionsPerIp: 10,
+    requestTimeoutMs: 30_000,
+    headerReadTimeoutMs: 5_000,
+    bodyReadTimeoutMs: 10_000,
+    idleTimeoutMs: 60_000,
+    maxBodyBytes: 1_048_576,
+    maxHeaderBytes: 8_192,
+    slowlorisTimeoutMs: 10_000,
+    banDurationSeconds: 3_600,
+    banThresholdViolations: 10,
     ...overrides,
   };
 }
@@ -98,13 +98,13 @@ export function createMockProtectionConfig(overrides: Partial<ProtectionConfig> 
  */
 export function createMockGatewayConfig(overrides: Partial<GatewayConfig> = {}): GatewayConfig {
   return {
-    host_remote_entry: '/host/remoteEntry.json',
-    host_exposed_module: './AppShell',
-    host_framework: 'auto',
-    public_url: 'http://localhost:4200',
-    cors_origins: ['*'],
-    custom_headers: {},
-    health_check_path: '/health',
+    hostRemoteEntry: '/host/remoteEntry.json',
+    hostExposedModule: './AppShell',
+    hostFramework: 'auto',
+    publicUrl: 'http://localhost:4200',
+    corsOrigins: ['*'],
+    customHeaders: {},
+    healthCheckPath: '/health',
     protection: createMockProtectionConfig(),
     ...overrides,
   };

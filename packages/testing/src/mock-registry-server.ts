@@ -207,8 +207,8 @@ export class MockRegistryServer {
       const host: HostConfig = createMockHost({
         ...body,
         id: String(Date.now()),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
       this.hosts.push(host);
       res.status(201).json(host);
@@ -252,13 +252,13 @@ export class MockRegistryServer {
 
     app.post('/api/gates', auth, (req, res) => {
       const body = req.body as Partial<GateConfig>;
-      const host = this.hosts.find((h) => h.id === (body as { host_id?: string }).host_id) ?? createMockHost();
+      const host = this.hosts.find((h) => h.id === (body as { hostId?: string }).hostId) ?? createMockHost();
       const gate: GateConfig = createMockGate({
         ...body,
         host,
         id: String(Date.now()),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
       this.gates.push(gate);
       res.status(201).json(gate);

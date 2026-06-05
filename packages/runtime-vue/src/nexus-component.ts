@@ -39,6 +39,7 @@ export const NexusComponent = defineComponent({
             const m = mod as Record<string, unknown>;
             return (m['default'] ?? m[Object.keys(m)[0]]) as Component;
           }),
+        delay: 0,
         loadingComponent: slots.default
           ? defineComponent({ render: () => slots.default?.() ?? null })
           : undefined,

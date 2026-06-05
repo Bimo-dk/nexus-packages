@@ -11,11 +11,11 @@ export class RegistryWebSocketService {
   private intentionalClose = false;
   private attemptCount = 0;
   private policy: ReconnectPolicy = {
-    initial_delay_ms: 1000,
-    max_delay_ms: 30_000,
-    backoff_multiplier: 2,
-    jitter_ms: 0,
-    max_attempts: 0,
+    initialDelayMs: 1000,
+    maxDelayMs: 30_000,
+    backoffMultiplier: 2,
+    jitterMs: 0,
+    maxAttempts: 0,
   };
 
   readonly connected = signal<boolean>(false);
@@ -65,16 +65,16 @@ export class RegistryWebSocketService {
         const data = typeof ev.data === 'string' ? ev.data : '';
         const msg = JSON.parse(data) as WebSocketMessage;
 
-        if (msg.type === 'connected' && msg.reconnect_policy) {
+        if (msg.type === 'welcome' && msg.reconnect_policy) {
           this.policy = msg.reconnect_policy;
         } else if (msg.type === 'reconnect_policy_changed') {
-          this.policy = msg.reconnect_policy;
-        } else if (msg.type === 'registry_updated') {
+          this.policy = msg.policy;
+        } else if (msg.type === 'remotes_changed') {
           this.remotesChanged$.next(msg.remotes);
         } else if (msg.type === 'host_changed') {
           this.hostChanged$.next(msg.host);
-        } else if (msg.type === 'gateway_config_changed') {
-          this.gatewayConfigChanged$.next(msg.value);
+        } else if (msg.type === 'config_changed' && msg.section === 'gateway') {
+          this.gatewayConfigChanged$.next(msg.value as GatewayConfig);
         }
       } catch (err) {
         console.error('[nexus-ws] Malformed message:', err);
@@ -94,11 +94,11 @@ export class RegistryWebSocketService {
 
   private scheduleReconnect(): void {
     if (this.intentionalClose || this.reconnectTimer !== null) return;
-    if (this.policy.max_attempts > 0 && this.attemptCount >= this.policy.max_attempts) return;
+    if (this.policy.maxAttempts > 0 && this.attemptCount >= this.policy.maxAttempts) return;
 
-    const base = this.policy.initial_delay_ms * Math.pow(this.policy.backoff_multiplier, this.attemptCount);
-    const jitter = this.policy.jitter_ms > 0 ? Math.random() * this.policy.jitter_ms : 0;
-    const delay = Math.min(base + jitter, this.policy.max_delay_ms);
+    const base = this.policy.initialDelayMs * Math.pow(this.policy.backoffMultiplier, this.attemptCount);
+    const jitter = this.policy.jitterMs > 0 ? Math.random() * this.policy.jitterMs : 0;
+    const delay = Math.min(base + jitter, this.policy.maxDelayMs);
 
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;

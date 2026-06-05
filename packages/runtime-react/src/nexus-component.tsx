@@ -9,7 +9,7 @@ import { NexusLoader } from '@bimo-dk/nexus-runtime-core';
 const loaderInstance = new NexusLoader();
 
 class ComponentErrorBoundary extends React.Component<
-  { fallback: ReactNode; children: ReactNode },
+  { fallback: ReactNode; children?: ReactNode },
   { hasError: boolean; message: string }
 > {
   constructor(props: { fallback: ReactNode; children: ReactNode }) {
@@ -21,7 +21,7 @@ class ComponentErrorBoundary extends React.Component<
     return { hasError: true, message: error instanceof Error ? error.message : String(error) };
   }
 
-  render(): ReactNode {
+  override render(): ReactNode {
     if (this.state.hasError) return this.props.fallback ?? null;
     return this.props.children;
   }
@@ -61,13 +61,11 @@ export function NexusComponent({
     [remote, expose],
   );
 
-  return React.createElement(
-    ComponentErrorBoundary,
-    { fallback: errorFallback },
-    React.createElement(
-      Suspense,
-      { fallback: loadingFallback },
-      React.createElement(LazyComp, inputs),
-    ),
+  return (
+    <ComponentErrorBoundary fallback={errorFallback}>
+      <Suspense fallback={loadingFallback}>
+        <LazyComp {...inputs} />
+      </Suspense>
+    </ComponentErrorBoundary>
   );
 }

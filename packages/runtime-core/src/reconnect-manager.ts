@@ -21,11 +21,11 @@ export class ReconnectManager {
   /** Call on clean disconnect. Starts the reconnect cycle. */
   scheduleReconnect(): void {
     if (this.stopped || this.timer !== null) return;
-    if (this.policy.max_attempts > 0 && this.attemptCount >= this.policy.max_attempts) return;
+    if (this.policy.maxAttempts > 0 && this.attemptCount >= this.policy.maxAttempts) return;
 
-    const base = this.policy.initial_delay_ms * Math.pow(this.policy.backoff_multiplier, this.attemptCount);
-    const jitter = this.policy.jitter_ms > 0 ? Math.random() * this.policy.jitter_ms : 0;
-    const delay = Math.min(base + jitter, this.policy.max_delay_ms);
+    const base = this.policy.initialDelayMs * Math.pow(this.policy.backoffMultiplier, this.attemptCount);
+    const jitter = this.policy.jitterMs > 0 ? Math.random() * this.policy.jitterMs : 0;
+    const delay = Math.min(base + jitter, this.policy.maxDelayMs);
 
     this.timer = setTimeout(async () => {
       this.timer = null;

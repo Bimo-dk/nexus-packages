@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import { NexusComponent } from './nexus-component.js';
 
-const mockLoadRemoteModule = vi.fn();
+const mockLoadRemoteModule = vi.hoisted(() => vi.fn());
 vi.mock('@bimo-dk/nexus-runtime-core', () => ({
   NexusLoader: class {
     loadRemoteModule = mockLoadRemoteModule;
