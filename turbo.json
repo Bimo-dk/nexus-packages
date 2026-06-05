@@ -35,5 +35,19 @@
       "cache": false,
       "outputs": []
     }
+  },
+  "pipeline": {
+    "@bimo-dk/nexus-runtime-core#build": {
+      "dependsOn": ["@bimo-dk/nexus-core#build", "@bimo-dk/nexus-client#build"]
+    },
+    "@bimo-dk/nexus-runtime#build": {
+      "dependsOn": ["@bimo-dk/nexus-runtime-core#build"]
+    },
+    "@bimo-dk/nexus-runtime-vue#build": {
+      "dependsOn": ["@bimo-dk/nexus-runtime-core#build"]
+    },
+    "@bimo-dk/nexus-runtime-react#build": {
+      "dependsOn": ["@bimo-dk/nexus-runtime-core#build"]
+    }
   }
 }

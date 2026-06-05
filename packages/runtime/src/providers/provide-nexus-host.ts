@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideNexusConfig } from './provide-nexus-config';
+import { loadRuntimeConfig } from '../config-loader';
+import { NEXUS_CONFIG } from '../tokens';
 import { correlationIdInterceptor } from '../interceptors/correlation-id.interceptor';
 import { nexusAuthInterceptor } from '../interceptors/nexus-auth.interceptor';
 import { DynamicNexusService } from '../host/dynamic-nexus.service';
@@ -20,6 +22,15 @@ export interface NexusHostProviderOptions {
   host?: NexusHostConfig;
 }
 
+function readGatewayOverrides(): Partial<NexusRuntimeConfig> {
+  if (typeof window === 'undefined') return {};
+  const gw = (window as unknown as { __NEXUS_GATEWAY_CONFIG__?: { registryUrl?: string; wsUrl?: string } }).__NEXUS_GATEWAY_CONFIG__;
+  if (!gw) return {};
+  const overrides: Partial<NexusRuntimeConfig> = {};
+  if (gw.registryUrl) overrides.registryUrl = gw.registryUrl;
+  return overrides;
+}
+
 /**
  * One-stop provider for Bimo-Nexus hosts.
  *
@@ -31,13 +42,16 @@ export interface NexusHostProviderOptions {
  *   - DynamicNexusService — fetches remotes, registers routes, reacts to broadcasts
  *   - HealthService — polls /health on every loaded remote
  *
- * Both are auto-started at bootstrap. Hosts only need to read `loadedRemotes()`
- * and `remoteHealth()` to render UI.
+ * When window.__NEXUS_GATEWAY_CONFIG__ is present its registryUrl takes precedence
+ * over configDefaults, so the host shell works correctly when loaded through a Nexus gateway.
  */
 export function provideNexusHost(options: NexusHostProviderOptions): EnvironmentProviders {
+  const gatewayOverrides = readGatewayOverrides();
+  const effectiveDefaults: NexusRuntimeConfig = { ...options.configDefaults, ...gatewayOverrides };
   const healthIntervalMs = options.host?.healthIntervalMs;
+
   const providers: (Provider | EnvironmentProviders)[] = [
-    provideNexusConfig(options.configDefaults),
+    provideNexusConfig(effectiveDefaults),
     provideHttpClient(withInterceptors([nexusAuthInterceptor, correlationIdInterceptor])),
     {
       provide: APP_INITIALIZER,
@@ -45,7 +59,13 @@ export function provideNexusHost(options: NexusHostProviderOptions): Environment
       useFactory: () => {
         const nexus = inject(DynamicNexusService);
         const health = inject(HealthService);
+        const config = inject(NEXUS_CONFIG);
         return async () => {
+          const loaded = await loadRuntimeConfig(
+            effectiveDefaults,
+            effectiveDefaults.configAssetPath,
+          );
+          Object.assign(config, loaded, gatewayOverrides);
           await nexus.initialize();
           health.start(healthIntervalMs);
         };

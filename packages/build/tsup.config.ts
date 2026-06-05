@@ -5,6 +5,7 @@ export default defineConfig({
     index: 'src/index.ts',
     scanner: 'src/scanner.ts',
     cli: 'src/cli.ts',
+    'vite-plugin': 'src/vite-plugin.ts',
   },
   format: ['cjs', 'esm'],
   dts: true,

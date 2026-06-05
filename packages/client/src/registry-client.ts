@@ -2,9 +2,18 @@ import {
   NEXUS_DEFAULTS,
   RegistryError,
   type AddRemoteRequest,
+  type CreateGateDto,
+  type CreateHostDto,
+  type GateConfig,
+  type GatewayConfig,
   type HealthStatus,
+  type HostConfig,
+  type HostRemoteConfig,
+  type ProtectionConfig,
   type RegistryResponse,
   type RemoteConfig,
+  type UpdateGateDto,
+  type UpdateHostDto,
   type UpdateRemoteRequest,
 } from '@bimo-dk/nexus-core';
 import { nextRequestId } from './correlation.js';
@@ -20,6 +29,16 @@ export interface RegistryClientOptions {
   fetchImpl?: typeof fetch;
 }
 
+export interface GetRemotesOptions {
+  host_id?: string;
+}
+
+export interface ProtectionStatus {
+  active_bans: Array<{ ip: string; expires_at: string }>;
+  top_ips: Array<{ ip: string; request_count: number }>;
+  rate_limit_config: ProtectionConfig;
+}
+
 /**
  * HTTP client for the Nexus registry API.
  *
@@ -28,6 +47,7 @@ export interface RegistryClientOptions {
  *   const remotes = await client.getRemotes();
  */
 export class RegistryClient {
+  private readonly apiUrl: string;
   private readonly baseUrl: string;
   private readonly token: string;
   private readonly fetchImpl: typeof fetch;
@@ -39,13 +59,20 @@ export class RegistryClient {
     if (!options.token) {
       throw new Error('RegistryClient: token is required');
     }
-    this.baseUrl = options.registryUrl.replace(/\/$/, '') + '/remotes';
+    this.apiUrl = options.registryUrl.replace(/\/$/, '');
+    this.baseUrl = this.apiUrl + '/api/remotes';
     this.token = options.token;
     this.fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
   }
 
-  async getRemotes(): Promise<RemoteConfig[]> {
-    const res = await this.request('GET', this.baseUrl);
+  // ── Remotes ────────────────────────────────────────────────────────────────
+
+  async getRemotes(options?: GetRemotesOptions): Promise<RemoteConfig[]> {
+    let url = this.baseUrl;
+    if (options?.host_id) {
+      url += `?host_id=${encodeURIComponent(options.host_id)}`;
+    }
+    const res = await this.request('GET', url);
     const body = (await res.json()) as RegistryResponse;
     return body.remotes;
   }
@@ -72,6 +99,122 @@ export class RegistryClient {
     return (await res.json()) as RemoteConfig;
   }
 
+  // ── Hosts ──────────────────────────────────────────────────────────────────
+
+  async getHosts(): Promise<HostConfig[]> {
+    const res = await this.request('GET', `${this.apiUrl}/api/hosts`);
+    return (await res.json()) as HostConfig[];
+  }
+
+  async getHost(id: string): Promise<HostConfig> {
+    const res = await this.request('GET', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}`);
+    return (await res.json()) as HostConfig;
+  }
+
+  async getHostRemotes(id: string): Promise<HostRemoteConfig[]> {
+    const res = await this.request('GET', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}/remotes`);
+    const body = (await res.json()) as { remotes: HostRemoteConfig[] };
+    return body.remotes;
+  }
+
+  async createHost(dto: CreateHostDto): Promise<HostConfig> {
+    const res = await this.request('POST', `${this.apiUrl}/api/hosts`, dto);
+    return (await res.json()) as HostConfig;
+  }
+
+  async updateHost(id: string, dto: UpdateHostDto): Promise<HostConfig> {
+    const res = await this.request('PUT', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}`, dto);
+    return (await res.json()) as HostConfig;
+  }
+
+  async deleteHost(id: string): Promise<void> {
+    await this.request('DELETE', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}`);
+  }
+
+  async toggleHost(id: string): Promise<HostConfig> {
+    const res = await this.request('POST', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}/toggle`, {});
+    return (await res.json()) as HostConfig;
+  }
+
+  // ── Gates ──────────────────────────────────────────────────────────────────
+
+  async getGates(): Promise<GateConfig[]> {
+    const res = await this.request('GET', `${this.apiUrl}/api/gates`);
+    return (await res.json()) as GateConfig[];
+  }
+
+  async getGate(id: string): Promise<GateConfig> {
+    const res = await this.request('GET', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}`);
+    return (await res.json()) as GateConfig;
+  }
+
+  async getGateByDomain(domain: string): Promise<GateConfig> {
+    const res = await this.request('GET', `${this.apiUrl}/api/gates/by-domain/${encodeURIComponent(domain)}`);
+    return (await res.json()) as GateConfig;
+  }
+
+  async createGate(dto: CreateGateDto): Promise<GateConfig> {
+    const res = await this.request('POST', `${this.apiUrl}/api/gates`, dto);
+    return (await res.json()) as GateConfig;
+  }
+
+  async updateGate(id: string, dto: UpdateGateDto): Promise<GateConfig> {
+    const res = await this.request('PUT', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}`, dto);
+    return (await res.json()) as GateConfig;
+  }
+
+  async deleteGate(id: string): Promise<void> {
+    await this.request('DELETE', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}`);
+  }
+
+  async toggleGate(id: string): Promise<GateConfig> {
+    const res = await this.request('POST', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}/toggle`, {});
+    return (await res.json()) as GateConfig;
+  }
+
+  // ── Gateway config ─────────────────────────────────────────────────────────
+
+  async getGatewayConfig(): Promise<GatewayConfig> {
+    const res = await this.request('GET', `${this.apiUrl}/api/config/gateway`);
+    return (await res.json()) as GatewayConfig;
+  }
+
+  async updateGatewayConfig(patch: Partial<GatewayConfig>): Promise<GatewayConfig> {
+    const res = await this.request('PUT', `${this.apiUrl}/api/config/gateway`, patch);
+    return (await res.json()) as GatewayConfig;
+  }
+
+  // ── Protection ─────────────────────────────────────────────────────────────
+
+  async getProtectionStatus(): Promise<ProtectionStatus> {
+    const res = await this.request('GET', `${this.apiUrl}/api/protection/status`);
+    return (await res.json()) as ProtectionStatus;
+  }
+
+  async getProtectionConfig(): Promise<ProtectionConfig> {
+    const res = await this.request('GET', `${this.apiUrl}/api/config/gateway/protection`);
+    return (await res.json()) as ProtectionConfig;
+  }
+
+  async updateProtectionConfig(config: ProtectionConfig): Promise<ProtectionConfig> {
+    const res = await this.request('PUT', `${this.apiUrl}/api/config/gateway/protection`, config);
+    return (await res.json()) as ProtectionConfig;
+  }
+
+  async banIp(ip: string, duration_seconds?: number): Promise<void> {
+    await this.request('POST', `${this.apiUrl}/api/protection/ban`, { ip, duration_seconds });
+  }
+
+  async unbanIp(ip: string): Promise<void> {
+    await this.request('DELETE', `${this.apiUrl}/api/protection/ban/${encodeURIComponent(ip)}`);
+  }
+
+  async clearAllBans(): Promise<void> {
+    await this.request('DELETE', `${this.apiUrl}/api/protection/ban`);
+  }
+
+  // ── Health ─────────────────────────────────────────────────────────────────
+
   async checkHealth(url: string): Promise<HealthStatus> {
     const healthUrl = this.healthUrlFor(url);
     const start = Date.now();
@@ -96,6 +239,8 @@ export class RegistryClient {
       };
     }
   }
+
+  // ── Internal ───────────────────────────────────────────────────────────────
 
   private async request(method: string, url: string, body?: unknown): Promise<Response> {
     const correlationId = nextRequestId();
@@ -151,7 +296,6 @@ export class RegistryClient {
       u.pathname = '/health';
       u.search = '';
       if (u.hostname === 'placeholder.invalid') {
-        // relative URL — strip and build relative /health
         return remoteEntryUrl.replace(/\/remoteEntry\.json.*$/, '/health');
       }
       return u.toString();

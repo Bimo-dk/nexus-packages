@@ -21,6 +21,11 @@
       "types": "./dist/scanner.d.ts",
       "import": "./dist/scanner.mjs",
       "require": "./dist/scanner.cjs"
+    },
+    "./vite": {
+      "types": "./dist/vite-plugin.d.ts",
+      "import": "./dist/vite-plugin.mjs",
+      "require": "./dist/vite-plugin.cjs"
     }
   },
   "bin": {
@@ -49,6 +54,7 @@
     "@types/node": "^22.10.0",
     "rimraf": "^6.0.1",
     "tsup": "^8.3.5",
+    "vite": "^5.0.0",
     "vitest": "^2.1.8"
   },
   "publishConfig": {
