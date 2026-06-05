@@ -46,6 +46,7 @@ export { requireRole, requireAuth } from './auth/role-guard';
 export { loadRuntimeConfig } from './config-loader';
 export { readRemoteMetadata, type RemoteDecoratorMeta } from './decorator-meta';
 export { deriveRouteFromName } from './route-utils';
+export { useNexusGatewayConfig } from './gateway-config';
 
 // Types
 export type {

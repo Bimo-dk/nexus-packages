@@ -27,3 +27,27 @@ export class RegistryError extends Error {
     };
   }
 }
+
+/**
+ * Extended error with a machine-readable errorCode for platform-level failures
+ * like IP bans, rate limiting, and connection limits.
+ *
+ * Common codes: ip_banned, rate_limited, too_many_connections
+ */
+export class NexusError extends RegistryError {
+  public readonly errorCode: string;
+
+  constructor(message: string, statusCode: number, errorCode: string, correlationId?: string) {
+    super(message, statusCode, correlationId);
+    this.name = 'NexusError';
+    this.errorCode = errorCode;
+    Object.setPrototypeOf(this, NexusError.prototype);
+  }
+
+  override toJSON(): { name: string; message: string; statusCode: number; errorCode: string; correlationId?: string } {
+    return {
+      ...super.toJSON(),
+      errorCode: this.errorCode,
+    };
+  }
+}

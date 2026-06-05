@@ -33,7 +33,7 @@ describe('RegistryClient', () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
     const [, init] = fetchImpl.mock.calls[0] as [string, RequestInit];
     const headers = init.headers as Record<string, string>;
-    expect(headers['X-Bimo-Token']).toBe('secret-token');
+    expect(headers['X-Nexus-Token']).toBe('secret-token');
     expect(headers['X-Request-ID']).toMatch(/^[a-z0-9]+-\d+$/);
   });
 

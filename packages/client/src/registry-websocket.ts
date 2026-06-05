@@ -1,40 +1,55 @@
-import { NEXUS_DEFAULTS, type WebSocketMessage } from '@bimo-dk/nexus-core';
+import { NEXUS_DEFAULTS, type ReconnectPolicy, type WebSocketMessage } from '@bimo-dk/nexus-core';
 
 export interface RegistryWebSocketOptions {
   /** Base URL to registry/proxy — used to derive ws://...:port/ws. */
   registryUrl: string;
-  /** Token (forwarded as subprotocol or query — currently unused on the server side). */
+  /** X-Nexus-Token. Required by the registry. Forwarded as `?token=...` because browser WebSocket cannot send custom headers. */
   token: string;
-  /** Min reconnect delay in ms. Default 1000. */
+  /** Min reconnect delay in ms. Default 1000. Used until the server sends a reconnect_policy. */
   minReconnectDelayMs?: number;
-  /** Max reconnect delay in ms. Default NEXUS_DEFAULTS.WS_MAX_RECONNECT_DELAY_MS. */
+  /** Max reconnect delay in ms. Default NEXUS_DEFAULTS.WS_MAX_RECONNECT_DELAY_MS. Used until the server sends a reconnect_policy. */
   maxReconnectDelayMs?: number;
 }
 
 type MessageHandler = (msg: WebSocketMessage) => void;
+type ReconnectPolicyHandler = (policy: ReconnectPolicy) => void;
 
 /**
  * WebSocket client for the registry's /ws endpoint.
  *
- * Built-in exponential backoff reconnect (1s -> 2s -> 4s -> ... -> max).
+ * Built-in exponential backoff reconnect. When the server sends a reconnect_policy in the
+ * welcome message or via reconnect_policy_changed, those values replace the constructor defaults.
  * Universal: works in browser (native WebSocket) and Node.js 22+ (native WebSocket).
  */
 export class RegistryWebSocket {
   private readonly wsUrl: string;
-  private readonly minDelay: number;
-  private readonly maxDelay: number;
   private readonly handlers = new Set<MessageHandler>();
+  private readonly reconnectPolicyHandlers = new Set<ReconnectPolicyHandler>();
   private socket: WebSocket | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-  private currentDelay: number;
   private intentionalClose = false;
+  private attemptCount = 0;
+
+  // Reconnect policy — updated from server when available
+  private policy: ReconnectPolicy = {
+    initialDelayMs: 1000,
+    maxDelayMs: NEXUS_DEFAULTS.WS_MAX_RECONNECT_DELAY_MS,
+    backoffMultiplier: 2,
+    jitterMs: 0,
+    maxAttempts: 0,
+  };
 
   constructor(options: RegistryWebSocketOptions) {
     if (!options.registryUrl) throw new Error('RegistryWebSocket: registryUrl is required');
-    this.wsUrl = this.deriveWsUrl(options.registryUrl);
-    this.minDelay = options.minReconnectDelayMs ?? 1000;
-    this.maxDelay = options.maxReconnectDelayMs ?? NEXUS_DEFAULTS.WS_MAX_RECONNECT_DELAY_MS;
-    this.currentDelay = this.minDelay;
+    this.wsUrl = this.appendToken(this.deriveWsUrl(options.registryUrl), options.token);
+    if (options.minReconnectDelayMs !== undefined) this.policy.initialDelayMs = options.minReconnectDelayMs;
+    if (options.maxReconnectDelayMs !== undefined) this.policy.maxDelayMs = options.maxReconnectDelayMs;
+  }
+
+  private appendToken(url: string, token: string): string {
+    if (!token) return url;
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}token=${encodeURIComponent(token)}`;
   }
 
   connect(): void {
@@ -63,6 +78,17 @@ export class RegistryWebSocket {
     return () => this.handlers.delete(handler);
   }
 
+  onReconnectPolicyChanged(handler: ReconnectPolicyHandler): () => void {
+    this.reconnectPolicyHandlers.add(handler);
+    return () => this.reconnectPolicyHandlers.delete(handler);
+  }
+
+  /** Send a subscribe_gate message so the server streams gate-specific events. */
+  subscribeGate(gate_name: string): void {
+    if (!this.isConnected || !this.socket) return;
+    this.socket.send(JSON.stringify({ type: NEXUS_DEFAULTS.WS_SUBSCRIBE_GATE_TYPE, gate_name }));
+  }
+
   get isConnected(): boolean {
     return this.socket?.readyState === 1; // WebSocket.OPEN
   }
@@ -77,12 +103,22 @@ export class RegistryWebSocket {
     }
 
     this.socket.addEventListener('open', () => {
-      this.currentDelay = this.minDelay;
+      this.attemptCount = 0;
     });
 
     this.socket.addEventListener('message', (ev: MessageEvent) => {
       try {
         const msg = JSON.parse(typeof ev.data === 'string' ? ev.data : '') as WebSocketMessage;
+
+        if (msg.type === 'welcome' && msg.reconnect_policy) {
+          this.applyPolicy(msg.reconnect_policy);
+        } else if (msg.type === 'reconnect_policy_changed') {
+          this.applyPolicy(msg.policy);
+          for (const h of this.reconnectPolicyHandlers) {
+            try { h(msg.policy); } catch (err) { console.error('[nexus-ws] Policy handler threw:', err); }
+          }
+        }
+
         for (const handler of this.handlers) {
           try {
             handler(msg);
@@ -107,14 +143,23 @@ export class RegistryWebSocket {
     });
   }
 
+  private applyPolicy(policy: ReconnectPolicy): void {
+    this.policy = policy;
+  }
+
   private scheduleReconnect(): void {
     if (this.intentionalClose || this.reconnectTimer !== null) return;
-    const delay = this.currentDelay;
+    if (this.policy.maxAttempts > 0 && this.attemptCount >= this.policy.maxAttempts) return;
+
+    const base = this.policy.initialDelayMs * Math.pow(this.policy.backoffMultiplier, this.attemptCount);
+    const jitter = this.policy.jitterMs > 0 ? Math.random() * this.policy.jitterMs : 0;
+    const delay = Math.min(base + jitter, this.policy.maxDelayMs);
+
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
+      this.attemptCount++;
       this.openSocket();
     }, delay);
-    this.currentDelay = Math.min(this.currentDelay * 2, this.maxDelay);
   }
 
   private deriveWsUrl(registryUrl: string): string {

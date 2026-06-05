@@ -1,26 +1,32 @@
 {
-  "name": "@bimo-dk/nexus-cli",
-  "version": "0.2.0",
-  "description": "bnx — Bimo-Nexus kommandolinje-vaerktoej til generate, publish, status, health, dev",
+  "name": "@bimo-dk/nexus-runtime-react",
+  "version": "0.1.0",
+  "description": "React 18 provider, hooks, and NexusComponent for Bimo-Nexus hosts and remotes",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",
-    "directory": "packages/cli"
+    "directory": "packages/runtime-react"
   },
   "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "bnx": "./dist/index.cjs"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "lint": "echo \"(skipping lint — no eslint config yet)\" && exit 0",
     "type-check": "tsc --noEmit",
     "clean": "rimraf dist"
@@ -28,16 +34,20 @@
   "dependencies": {
     "@bimo-dk/nexus-core": "*",
     "@bimo-dk/nexus-client": "*",
-    "chalk": "^5.3.0",
-    "commander": "^12.1.0",
-    "dotenv": "^16.4.7",
-    "express": "^5.0.1",
-    "http-proxy-middleware": "^3.0.3",
-    "inquirer": "^12.2.0"
+    "@bimo-dk/nexus-runtime-core": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
+    "@testing-library/react": "^16.0.0",
     "@types/node": "^22.10.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "jsdom": "^25.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
     "rimraf": "^6.0.1",
     "tsup": "^8.3.5",
     "typescript": "^5.6.3",

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { isValidRemoteName, isValidRoutePath, isValidUrl } from './validators.js';
+import { isValidRemoteName, isValidRoutePath, isValidUrl, isValidVisibility, isValidFramework } from './validators.js';
 import { NEXUS_DEFAULTS } from './constants.js';
-import { RegistryError } from './errors.js';
+import { RegistryError, NexusError } from './errors.js';
 
 describe('validators', () => {
   it('accepts valid camelCase remote names', () => {
@@ -40,9 +40,45 @@ describe('validators', () => {
   });
 });
 
+describe('isValidVisibility', () => {
+  it('accepts global', () => {
+    expect(isValidVisibility('global')).toBe(true);
+  });
+
+  it('accepts host: followed by a non-empty id', () => {
+    expect(isValidVisibility('host:abc123')).toBe(true);
+    expect(isValidVisibility('host:some-host-id')).toBe(true);
+  });
+
+  it('rejects host: with nothing after the colon', () => {
+    expect(isValidVisibility('host:')).toBe(false);
+    expect(isValidVisibility('host:   ')).toBe(false);
+  });
+
+  it('rejects any other string', () => {
+    expect(isValidVisibility('')).toBe(false);
+    expect(isValidVisibility('all')).toBe(false);
+    expect(isValidVisibility('private')).toBe(false);
+  });
+});
+
+describe('isValidFramework', () => {
+  it('accepts angular, vue, react', () => {
+    expect(isValidFramework('angular')).toBe(true);
+    expect(isValidFramework('vue')).toBe(true);
+    expect(isValidFramework('react')).toBe(true);
+  });
+
+  it('rejects other values', () => {
+    expect(isValidFramework('svelte')).toBe(false);
+    expect(isValidFramework('')).toBe(false);
+    expect(isValidFramework('Angular')).toBe(false);
+  });
+});
+
 describe('NEXUS_DEFAULTS', () => {
   it('exposes platform constants', () => {
-    expect(NEXUS_DEFAULTS.TOKEN_HEADER).toBe('X-Bimo-Token');
+    expect(NEXUS_DEFAULTS.TOKEN_HEADER).toBe('X-Nexus-Token');
     expect(NEXUS_DEFAULTS.REQUEST_ID_HEADER).toBe('X-Request-ID');
     expect(NEXUS_DEFAULTS.WEBSOCKET_PATH).toBe('/ws');
     expect(NEXUS_DEFAULTS.CACHE_TTL_MS).toBe(86_400_000);
@@ -74,5 +110,22 @@ describe('RegistryError', () => {
       statusCode: 404,
       correlationId: 'reg-xyz',
     });
+  });
+});
+
+describe('NexusError', () => {
+  it('extends RegistryError and carries errorCode', () => {
+    const err = new NexusError('Banned', 429, 'ip_banned', 'req-1');
+    expect(err instanceof Error).toBe(true);
+    expect(err instanceof RegistryError).toBe(true);
+    expect(err instanceof NexusError).toBe(true);
+    expect(err.errorCode).toBe('ip_banned');
+    expect(err.statusCode).toBe(429);
+    expect(err.name).toBe('NexusError');
+  });
+
+  it('serializes errorCode to JSON', () => {
+    const err = new NexusError('Too many', 429, 'rate_limited');
+    expect(err.toJSON()).toMatchObject({ errorCode: 'rate_limited', statusCode: 429 });
   });
 });

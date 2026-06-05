@@ -4,6 +4,6 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": ["@bimo-dk/nexus-core", "@bimo-dk/nexus-client"],
+  "allowedNonPeerDependencies": ["@bimo-dk/nexus-core", "@bimo-dk/nexus-client", "@bimo-dk/nexus-runtime-core"],
   "assets": ["README.md"]
 }

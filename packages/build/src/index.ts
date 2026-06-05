@@ -10,3 +10,7 @@ export type {
   NexusInputSpec,
   NexusInputType,
 } from './types.js';
+
+// Vue/React config helper (no Node deps — safe in any bundler)
+export { defineNexusConfig } from './nexus-config.js';
+export type { NexusConfigFile } from './nexus-config.js';

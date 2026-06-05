@@ -1,21 +1,27 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Subject } from 'rxjs';
-import type { RemoteConfig, WebSocketMessage } from '@bimo-dk/nexus-core';
+import type { GatewayConfig, HostConfig, ReconnectPolicy, RemoteConfig, WebSocketMessage } from '@bimo-dk/nexus-core';
 import { NEXUS_CONFIG } from '../tokens';
-
-const MIN_RECONNECT_MS = 1000;
-const MAX_RECONNECT_MS = 30000;
 
 @Injectable({ providedIn: 'root' })
 export class RegistryWebSocketService {
   private readonly cfg = inject(NEXUS_CONFIG);
   private socket: WebSocket | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-  private currentDelay = MIN_RECONNECT_MS;
   private intentionalClose = false;
+  private attemptCount = 0;
+  private policy: ReconnectPolicy = {
+    initialDelayMs: 1000,
+    maxDelayMs: 30_000,
+    backoffMultiplier: 2,
+    jitterMs: 0,
+    maxAttempts: 0,
+  };
 
   readonly connected = signal<boolean>(false);
   readonly remotesChanged$ = new Subject<RemoteConfig[]>();
+  readonly hostChanged$ = new Subject<HostConfig>();
+  readonly gatewayConfigChanged$ = new Subject<GatewayConfig>();
 
   connect(): void {
     this.intentionalClose = false;
@@ -50,7 +56,7 @@ export class RegistryWebSocketService {
 
     this.socket.addEventListener('open', () => {
       this.connected.set(true);
-      this.currentDelay = MIN_RECONNECT_MS;
+      this.attemptCount = 0;
       console.log(`[nexus-ws] Connected to ${wsUrl}`);
     });
 
@@ -58,8 +64,17 @@ export class RegistryWebSocketService {
       try {
         const data = typeof ev.data === 'string' ? ev.data : '';
         const msg = JSON.parse(data) as WebSocketMessage;
-        if (msg.type === 'registry_updated' && 'remotes' in msg) {
-          this.remotesChanged$.next((msg as { remotes: RemoteConfig[] }).remotes);
+
+        if (msg.type === 'welcome' && msg.reconnect_policy) {
+          this.policy = msg.reconnect_policy;
+        } else if (msg.type === 'reconnect_policy_changed') {
+          this.policy = msg.policy;
+        } else if (msg.type === 'remotes_changed') {
+          this.remotesChanged$.next(msg.remotes);
+        } else if (msg.type === 'host_changed') {
+          this.hostChanged$.next(msg.host);
+        } else if (msg.type === 'config_changed' && msg.section === 'gateway') {
+          this.gatewayConfigChanged$.next(msg.value as GatewayConfig);
         }
       } catch (err) {
         console.error('[nexus-ws] Malformed message:', err);
@@ -79,12 +94,17 @@ export class RegistryWebSocketService {
 
   private scheduleReconnect(): void {
     if (this.intentionalClose || this.reconnectTimer !== null) return;
-    const delay = this.currentDelay;
+    if (this.policy.maxAttempts > 0 && this.attemptCount >= this.policy.maxAttempts) return;
+
+    const base = this.policy.initialDelayMs * Math.pow(this.policy.backoffMultiplier, this.attemptCount);
+    const jitter = this.policy.jitterMs > 0 ? Math.random() * this.policy.jitterMs : 0;
+    const delay = Math.min(base + jitter, this.policy.maxDelayMs);
+
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
+      this.attemptCount++;
       this.openSocket();
     }, delay);
-    this.currentDelay = Math.min(this.currentDelay * 2, MAX_RECONNECT_MS);
   }
 
   private deriveWsUrl(): string {

@@ -50,7 +50,7 @@ check('RegistryClient constructor requires url+token', () => {
   assert.throws(() => new client.RegistryClient({ registryUrl: '', token: '' }));
 });
 check('RegistryClient constructs with valid input', () => {
-  const c = new client.RegistryClient({ registryUrl: 'http://localhost:3000', token: 'x' });
+  const c = new client.RegistryClient({ registryUrl: 'http://localhost:8670', token: 'x' });
   assert.ok(c);
 });
 check('RegistryClient re-exports NEXUS_DEFAULTS', () => {

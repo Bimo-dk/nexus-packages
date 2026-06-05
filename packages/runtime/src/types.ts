@@ -3,10 +3,10 @@ import type { RemoteHealthStatus } from '@bimo-dk/nexus-core';
 /**
  * Runtime config injected at container start via /assets/config.json.
  * Both remotes and hosts read this — fields are optional so callers can
- * supply sane defaults during dev (e.g. http://localhost:3000).
+ * supply sane defaults during dev (e.g. http://localhost:8670).
  */
 export interface NexusRuntimeConfig {
-  /** Registry base URL — e.g. 'http://localhost:3000' or '/api'. */
+  /** Registry base URL — e.g. 'http://localhost:8670' or '/api'. */
   registryUrl: string;
   /** Token sent as X-Nexus-Token header on registry calls. */
   nexusToken: string;

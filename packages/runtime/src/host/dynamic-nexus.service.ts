@@ -40,6 +40,17 @@ export class DynamicNexusService {
         );
       });
 
+    this.ws.hostChanged$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        // Re-sync remotes when a host changes (visibility may have shifted)
+        this.fetchInitial().then((remotes) =>
+          this.reconcile(remotes).catch((err) =>
+            console.error('[nexus] Reconcile from host_changed failed:', err),
+          ),
+        );
+      });
+
     this.ws.connect();
   }
 

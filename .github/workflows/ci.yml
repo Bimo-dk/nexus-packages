@@ -39,17 +39,21 @@ jobs:
         with:
           script: |
             const status = '${{ job.status }}';
-            const emoji = status === 'success' ? '�aa' : '❌';
+            const emoji = status === 'success' ? '✅' : '❌';
             const body = [
               `## ${emoji} Build status: ${status}`,
               '',
-              '| Pakke | Build | Test | Lint |',
+              '| Package | Build | Test | Lint |',
               '|---|---|---|---|',
               '| `@bimo-dk/nexus-core` | ✓ | ✓ | ✓ |',
               '| `@bimo-dk/nexus-client` | ✓ | ✓ | ✓ |',
+              '| `@bimo-dk/nexus-build` | ✓ | ✓ | ✓ |',
+              '| `@bimo-dk/nexus-runtime-core` | ✓ | ✓ | ✓ |',
+              '| `@bimo-dk/nexus-runtime` | ✓ | – | ✓ |',
+              '| `@bimo-dk/nexus-runtime-react` | ✓ | ✓ | ✓ |',
+              '| `@bimo-dk/nexus-runtime-vue` | ✓ | ✓ | ✓ |',
               '| `@bimo-dk/nexus-ui` | ✓ | – | ✓ |',
               '| `@bimo-dk/nexus-testing` | ✓ | ✓ | ✓ |',
-              '| `@bimo-dk/nexus-cli` | ✓ | ✓ | ✓ |',
               '',
               `[Workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
             ].join('\n');
