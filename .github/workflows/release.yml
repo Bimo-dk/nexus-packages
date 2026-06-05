@@ -4,15 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: 'Package name (fx core, client, ui, testing, cli)'
+        description: 'Package name (e.g. core, client, build, runtime-core, runtime, runtime-react, runtime-vue, ui, testing)'
         required: true
         type: choice
         options:
           - core
           - client
+          - build
+          - runtime-core
+          - runtime
+          - runtime-react
+          - runtime-vue
           - ui
           - testing
-          - cli
       version:
         description: 'New version (semver: 1.2.3)'
         required: true
