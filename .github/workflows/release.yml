@@ -82,10 +82,20 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            await github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: `@bimo-dk/nexus-${{ inputs.package }}@${{ inputs.version }}`,
-              name: `@bimo-dk/nexus-${{ inputs.package }} v${{ inputs.version }}`,
-              body: 'Manual hotfix release triggered via workflow_dispatch.',
-            });
+            const tag = `@bimo-dk/nexus-${{ inputs.package }}@${{ inputs.version }}`;
+            try {
+              await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag,
+              });
+            } catch (e) {
+              if (e.status !== 404) throw e;
+              await github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: tag,
+                name: `@bimo-dk/nexus-${{ inputs.package }} v${{ inputs.version }}`,
+                body: 'Manual hotfix release triggered via workflow_dispatch.',
+              });
+            }
