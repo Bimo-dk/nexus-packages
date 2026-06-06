@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
+          registry-url: 'https://registry.npmjs.org'
           scope: '@bimo-dk'
 
       - name: Install dependencies
@@ -59,9 +59,22 @@ jobs:
         working-directory: packages/${{ inputs.package }}
         run: npm version ${{ inputs.version }} --no-git-tag-version
 
-      - name: Publish to GitHub Packages
+      - name: Publish to npmjs.com
         working-directory: packages/${{ inputs.package }}
         run: npm publish --tag ${{ inputs.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Setup Node.js for GitHub Packages
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@bimo-dk'
+
+      - name: Mirror to GitHub Packages
+        working-directory: packages/${{ inputs.package }}
+        run: npm publish --tag ${{ inputs.tag }} --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
