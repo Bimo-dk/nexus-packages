@@ -71,7 +71,12 @@ export function nexusVite(options: NexusViteOptions): Plugin {
     },
 
     generateBundle(_, bundle) {
-      const exposes: Record<string, string> = {};
+      // Emit exposes as an array of { key, outFileName } objects to match
+      // the native-federation manifest shape that @bimo-dk/nexus-runtime
+      // and @angular-architects/native-federation both expect. The earlier
+      // object form ({ './X': './X.js' }) tripped the consumer with
+      // `t.exposes is not iterable`. (B-21)
+      const exposes: Array<{ key: string; outFileName: string }> = [];
       for (const [key, exposePath] of Object.entries(options.exposes)) {
         const absExposePath = path.resolve(root, exposePath.replace(/^\.\//, ''));
         const chunk = Object.values(bundle).find(
@@ -82,15 +87,15 @@ export function nexusVite(options: NexusViteOptions): Plugin {
             path.resolve(c.facadeModuleId.split('?')[0].replace(/\\/g, '/')) === absExposePath.replace(/\\/g, '/'),
         );
         if (chunk) {
-          exposes[`./${key}`] = `./${chunk.fileName}`;
+          exposes.push({ key: `./${key}`, outFileName: chunk.fileName });
         }
       }
 
-      if (Object.keys(exposes).length > 0) {
+      if (exposes.length > 0) {
         this.emitFile({
           type: 'asset',
           fileName: 'remoteEntry.json',
-          source: JSON.stringify({ name: options.name, exposes }, null, 2),
+          source: JSON.stringify({ name: options.name, exposes, shared: [] }, null, 2),
         });
       }
     },
