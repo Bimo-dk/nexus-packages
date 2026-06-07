@@ -85,17 +85,44 @@ export class DynamicNexusService {
         exposedModule: remote.exposedModule,
       });
 
-      const component =
-        moduleRef['EntryComponent'] ??
-        moduleRef['default'] ??
-        moduleRef[Object.keys(moduleRef)[0]];
-      if (!component) {
-        throw new Error(`Remote "${remote.name}" did not expose a usable component`);
+      // BYOF path: if the remote exports `mount(el)` we wrap it in the
+      // generic NexusByofWrapperComponent so Angular's router can route
+      // to a Vue/React/vanilla remote without trying to instantiate it
+      // as an Angular component. The remote owns its own framework
+      // runtime inside the wrapper's div.
+      const mountFn = (moduleRef as Record<string, unknown>)['mount'] as
+        | ((el: HTMLElement) => void | (() => void))
+        | undefined;
+
+      let loadComponentFactory: () => Promise<unknown>;
+
+      if (typeof mountFn === 'function') {
+        const { NexusByofWrapperComponent } = await import('./byof-wrapper.component.js');
+        loadComponentFactory = () => {
+          const SubClass = class extends NexusByofWrapperComponent {
+            override ngAfterViewInit(): void {
+              this.mountFn = mountFn;
+              super.ngAfterViewInit();
+            }
+          };
+          return Promise.resolve(SubClass);
+        };
+      } else {
+        const component =
+          moduleRef['EntryComponent'] ??
+          moduleRef['default'] ??
+          moduleRef[Object.keys(moduleRef)[0]];
+        if (!component) {
+          throw new Error(
+            `Remote "${remote.name}" did not expose a usable component or mount() function`,
+          );
+        }
+        loadComponentFactory = () => Promise.resolve(component);
       }
 
       const newRoute = {
         path: remote.routePath,
-        loadComponent: () => Promise.resolve(component),
+        loadComponent: loadComponentFactory,
         data: { remoteName: remote.name },
       };
 
