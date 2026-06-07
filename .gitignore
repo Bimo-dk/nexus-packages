@@ -12,3 +12,4 @@ Thumbs.db
 *.tsbuildinfo
 .idea/
 .vscode/
+packages/build/*.tgz
