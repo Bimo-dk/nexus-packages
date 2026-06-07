@@ -2,7 +2,8 @@
   "name": "@bimo-dk/nexus-testing",
   "version": "0.1.0",
   "description": "Test utilities, mock factories og in-memory MockRegistryServer for Bimo-Nexus",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
+  "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",

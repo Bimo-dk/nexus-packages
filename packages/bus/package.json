@@ -2,7 +2,8 @@
   "name": "@bimo-dk/nexus-bus",
   "version": "0.2.0",
   "description": "Typed publish/subscribe + request/response event bus for Bimo-Nexus federated components",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
+  "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",
