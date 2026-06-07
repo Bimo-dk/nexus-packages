@@ -1,6 +1,10 @@
 import type { Plugin } from 'vite';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import {
+  scanForDefineNexusComponent,
+  type DiscoveredFunctionComponent,
+} from './auto-scanner.js';
 
 export interface CatalogEntrySpec {
   expose: string;
@@ -120,6 +124,124 @@ export function nexusVite(options: NexusViteOptions): Plugin {
       const outPath = path.resolve(outDir, 'catalog.json');
       await fs.mkdir(outDir, { recursive: true });
       await fs.writeFile(outPath, JSON.stringify(manifest, null, 2), 'utf8');
+    },
+  };
+}
+
+export interface NexusViteAutoOptions {
+  /** Remote name in camelCase — must match the bnx registry name. */
+  name: string;
+  /** Source directory to scan. Defaults to 'src'. */
+  scanDir?: string;
+  /** Extra file extensions to scan. Defaults: .ts, .tsx, .vue, .js, .jsx. */
+  extensions?: string[];
+}
+
+/**
+ * Auto-discovering Vite plugin for Nexus Vue / React remotes.
+ *
+ * Replaces the hand-written `exposes` / `rollupOptions.input` / `catalog`
+ * triple in `vite.config.ts`. The plugin scans `src/` for components
+ * marked with `defineNexusComponent({ ... }, comp)`, then builds the
+ * same payload `nexusVite()` accepts and delegates to it.
+ *
+ * Net effect: a new component shows up in the portal Component Catalog
+ * the next time the remote is rebuilt — no developer ever touches the
+ * Vite config to register it. (B-28)
+ *
+ * @example
+ *   // vite.config.ts — the entire file
+ *   import { defineConfig } from 'vite';
+ *   import vue from '@vitejs/plugin-vue';
+ *   import { nexusViteAuto } from '@bimo-dk/nexus-build/vite';
+ *
+ *   export default defineConfig({
+ *     plugins: [vue(), nexusViteAuto({ name: 'shop' })],
+ *   });
+ *
+ *   // src/Cart.ts
+ *   import { defineNexusComponent } from '@bimo-dk/nexus-build';
+ *   import { defineComponent } from 'vue';
+ *
+ *   export const Cart = defineNexusComponent(
+ *     { title: 'Cart Widget', category: 'commerce', tags: ['cart'] },
+ *     defineComponent({ ... }),
+ *   );
+ */
+export function nexusViteAuto(options: NexusViteAutoOptions): Plugin {
+  let underlying: Plugin | null = null;
+  let discovered: DiscoveredFunctionComponent[] = [];
+
+  async function bootstrap(): Promise<void> {
+    if (underlying) return;
+    discovered = await scanForDefineNexusComponent({
+      srcDir: options.scanDir ?? 'src',
+      extensions: options.extensions,
+    });
+    const exposes: Record<string, string> = {};
+    const catalog: CatalogEntrySpec[] = [];
+    for (const c of discovered) {
+      const exposeName = c.exportName === 'default'
+        ? path.basename(c.fileRelative, path.extname(c.fileRelative))
+        : c.exportName;
+      exposes[exposeName] = c.fileRelative;
+      const entry: CatalogEntrySpec = {
+        expose: `./${exposeName}`,
+        title: c.metadata.title,
+      };
+      if (c.metadata.description) entry.description = c.metadata.description;
+      if (c.metadata.category) entry.category = c.metadata.category;
+      if (c.metadata.tags) entry.tags = c.metadata.tags;
+      catalog.push(entry);
+    }
+    underlying = nexusVite({ name: options.name, exposes, catalog });
+  }
+
+  return {
+    name: 'nexus-vite-auto',
+    enforce: 'pre',
+
+    async config(viteConfig, env) {
+      await bootstrap();
+      const rollupInput: Record<string, string> = { index: './index.html' };
+      for (const c of discovered) {
+        const exposeName = c.exportName === 'default'
+          ? path.basename(c.fileRelative, path.extname(c.fileRelative))
+          : c.exportName;
+        rollupInput[exposeName] = c.fileRelative;
+      }
+      const downstream = typeof underlying!.config === 'function'
+        ? await (underlying!.config as (c: typeof viteConfig, e: typeof env) => unknown)(viteConfig, env)
+        : undefined;
+      return {
+        ...(downstream as object | undefined),
+        build: {
+          rollupOptions: {
+            input: rollupInput,
+            preserveEntrySignatures: 'strict',
+          },
+        },
+      };
+    },
+
+    async configureServer(server) {
+      await bootstrap();
+      if (typeof underlying?.configureServer === 'function') {
+        await (underlying.configureServer as (s: typeof server) => unknown)(server);
+      }
+    },
+
+    async generateBundle(opts, bundle) {
+      await bootstrap();
+      if (typeof underlying?.generateBundle === 'function') {
+        await (underlying.generateBundle as (this: unknown, o: typeof opts, b: typeof bundle) => unknown).call(this, opts, bundle);
+      }
+    },
+
+    async closeBundle() {
+      if (typeof underlying?.closeBundle === 'function') {
+        await (underlying.closeBundle as (this: unknown) => unknown).call(this);
+      }
     },
   };
 }

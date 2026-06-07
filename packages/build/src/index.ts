@@ -4,6 +4,10 @@
 // browser bundlers that try to resolve those specifiers.
 export { NexusRemote, getNexusRemoteMetadata } from './decorator.js';
 export { NexusComponent, getNexusComponentMetadata } from './component-decorator.js';
+export {
+  defineNexusComponent,
+  getDefinedNexusComponentMetadata,
+} from './define-nexus-component.js';
 export type {
   NexusRemoteOptions,
   NexusComponentOptions,
