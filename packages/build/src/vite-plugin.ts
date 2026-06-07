@@ -81,15 +81,16 @@ export function nexusVite(options: NexusViteOptions): Plugin {
       // object form ({ './X': './X.js' }) tripped the consumer with
       // `t.exposes is not iterable`. (B-21)
       const exposes: Array<{ key: string; outFileName: string }> = [];
+      const norm = (p: string): string => p.replace(/\\/g, '/').toLowerCase();
       for (const [key, exposePath] of Object.entries(options.exposes)) {
-        const absExposePath = path.resolve(root, exposePath.replace(/^\.\//, ''));
-        const chunk = Object.values(bundle).find(
-          (c) =>
-            c.type === 'chunk' &&
-            c.isEntry &&
-            c.facadeModuleId != null &&
-            path.resolve(c.facadeModuleId.split('?')[0].replace(/\\/g, '/')) === absExposePath.replace(/\\/g, '/'),
-        );
+        const relPath = exposePath.replace(/^\.\//, '');
+        const absExposePath = norm(path.resolve(root, relPath));
+        const exposePathSuffix = norm('/' + relPath);
+        const chunk = Object.values(bundle).find((c) => {
+          if (c.type !== 'chunk' || !c.isEntry || c.facadeModuleId == null) return false;
+          const id = norm(c.facadeModuleId.split('?')[0]);
+          return id === absExposePath || id.endsWith(exposePathSuffix);
+        });
         if (chunk) {
           exposes.push({ key: `./${key}`, outFileName: chunk.fileName });
         }
@@ -169,17 +170,21 @@ export interface NexusViteAutoOptions {
  *   );
  */
 export function nexusViteAuto(options: NexusViteAutoOptions): Plugin {
-  let underlying: Plugin | null = null;
   let discovered: DiscoveredFunctionComponent[] = [];
+  let catalog: CatalogEntrySpec[] = [];
+  let exposes: Record<string, string> = {};
+  let outDir = 'dist';
+  let root = process.cwd();
+  let scanned = false;
 
-  async function bootstrap(): Promise<void> {
-    if (underlying) return;
+  async function scan(): Promise<void> {
+    if (scanned) return;
     discovered = await scanForDefineNexusComponent({
       srcDir: options.scanDir ?? 'src',
       extensions: options.extensions,
     });
-    const exposes: Record<string, string> = {};
-    const catalog: CatalogEntrySpec[] = [];
+    exposes = {};
+    catalog = [];
     for (const c of discovered) {
       const exposeName = c.exportName === 'default'
         ? path.basename(c.fileRelative, path.extname(c.fileRelative))
@@ -194,54 +199,98 @@ export function nexusViteAuto(options: NexusViteAutoOptions): Plugin {
       if (c.metadata.tags) entry.tags = c.metadata.tags;
       catalog.push(entry);
     }
-    underlying = nexusVite({ name: options.name, exposes, catalog });
+    scanned = true;
   }
 
   return {
     name: 'nexus-vite-auto',
     enforce: 'pre',
 
-    async config(viteConfig, env) {
-      await bootstrap();
-      const rollupInput: Record<string, string> = { index: './index.html' };
-      for (const c of discovered) {
-        const exposeName = c.exportName === 'default'
-          ? path.basename(c.fileRelative, path.extname(c.fileRelative))
-          : c.exportName;
-        rollupInput[exposeName] = c.fileRelative;
+    async config(viteConfig) {
+      await scan();
+      outDir = viteConfig.build?.outDir ?? 'dist';
+      root = viteConfig.root ?? process.cwd();
+      const rollupInput: Record<string, string> = {};
+      for (const exposeName of Object.keys(exposes)) {
+        rollupInput[exposeName] = exposes[exposeName];
       }
-      const downstream = typeof underlying!.config === 'function'
-        ? await (underlying!.config as (c: typeof viteConfig, e: typeof env) => unknown)(viteConfig, env)
-        : undefined;
+      const buildBlock = Object.keys(rollupInput).length > 0
+        ? {
+            build: {
+              rollupOptions: {
+                input: rollupInput,
+                preserveEntrySignatures: 'strict' as const,
+              },
+            },
+          }
+        : {};
       return {
-        ...(downstream as object | undefined),
-        build: {
-          rollupOptions: {
-            input: rollupInput,
-            preserveEntrySignatures: 'strict',
-          },
+        define: {
+          __NEXUS_REMOTE_NAME__: JSON.stringify(options.name),
+          __NEXUS_EXPOSES__: JSON.stringify(exposes),
+          __NEXUS_TOKEN__: JSON.stringify(process.env['NEXUS_TOKEN'] ?? ''),
+          __NEXUS_REGISTRY_URL__: JSON.stringify(process.env['REGISTRY_URL'] ?? ''),
         },
+        ...buildBlock,
       };
     },
 
     async configureServer(server) {
-      await bootstrap();
-      if (typeof underlying?.configureServer === 'function') {
-        await (underlying.configureServer as (s: typeof server) => unknown)(server);
-      }
+      await scan();
+      server.middlewares.use((req, res, next) => {
+        if (req.url !== '/remoteEntry.json') { next(); return; }
+        const devExposes: Record<string, string> = {};
+        for (const [k, v] of Object.entries(exposes)) {
+          devExposes[`./${k}`] = `/${v.replace(/^\.\//, '')}`;
+        }
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ name: options.name, exposes: devExposes }, null, 2));
+      });
     },
 
-    async generateBundle(opts, bundle) {
-      await bootstrap();
-      if (typeof underlying?.generateBundle === 'function') {
-        await (underlying.generateBundle as (this: unknown, o: typeof opts, b: typeof bundle) => unknown).call(this, opts, bundle);
+    generateBundle(_, bundle) {
+      const exposesOut: Array<{ key: string; outFileName: string }> = [];
+      const norm = (p: string): string => p.replace(/\\/g, '/').toLowerCase();
+      for (const [key, exposePath] of Object.entries(exposes)) {
+        const relPath = exposePath.replace(/^\.\//, '');
+        const absExposePath = norm(path.resolve(root, relPath));
+        const exposePathSuffix = norm('/' + relPath);
+        const chunk = Object.values(bundle).find((c) => {
+          if (c.type !== 'chunk' || !c.isEntry || c.facadeModuleId == null) return false;
+          const id = norm(c.facadeModuleId.split('?')[0]);
+          return id === absExposePath || id.endsWith(exposePathSuffix);
+        });
+        if (chunk) {
+          exposesOut.push({ key: `./${key}`, outFileName: chunk.fileName });
+        }
+      }
+      if (exposesOut.length > 0) {
+        this.emitFile({
+          type: 'asset',
+          fileName: 'remoteEntry.json',
+          source: JSON.stringify({ name: options.name, exposes: exposesOut, shared: [] }, null, 2),
+        });
       }
     },
 
     async closeBundle() {
-      if (typeof underlying?.closeBundle === 'function') {
-        await (underlying.closeBundle as (this: unknown) => unknown).call(this);
-      }
+      if (catalog.length === 0) return;
+      const manifest = {
+        remote: options.name,
+        generatedAt: new Date().toISOString(),
+        entries: catalog.map((entry) => ({
+          remote: options.name,
+          expose: entry.expose,
+          title: entry.title,
+          description: entry.description,
+          category: entry.category,
+          tags: entry.tags ?? [],
+          inputs: entry.inputs ?? {},
+        })),
+      };
+      const outPath = path.resolve(outDir, 'catalog.json');
+      await fs.mkdir(outDir, { recursive: true });
+      await fs.writeFile(outPath, JSON.stringify(manifest, null, 2), 'utf8');
     },
   };
 }
