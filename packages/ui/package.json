@@ -1,6 +1,6 @@
 {
   "name": "@bimo-dk/nexus-ui",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Angular 19 komponent-bibliotek til Bimo-Nexus (HealthBadge, OfflineBanner, LoadingSpinner, RemoteStatusCard)",
   "license": "AGPL-3.0-or-later",
   "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
@@ -17,7 +17,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@bimo-dk/nexus-core": "*",
+    "@bimo-dk/nexus-core": "^1.0.0",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

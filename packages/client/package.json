@@ -1,6 +1,6 @@
 {
   "name": "@bimo-dk/nexus-client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "HTTP + WebSocket klient til Bimo-Nexus registry API",
   "license": "AGPL-3.0-or-later",
   "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
@@ -33,7 +33,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@bimo-dk/nexus-core": "*"
+    "@bimo-dk/nexus-core": "^1.0.0"
   },
   "devDependencies": {
     "rimraf": "^6.0.1",

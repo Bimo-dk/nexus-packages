@@ -1,6 +1,6 @@
 {
   "name": "@bimo-dk/nexus-runtime",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "Angular providers + services + components for Bimo-Nexus hosts and remotes",
   "license": "AGPL-3.0-or-later",
   "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
@@ -17,9 +17,9 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@bimo-dk/nexus-core": "*",
-    "@bimo-dk/nexus-client": "*",
-    "@bimo-dk/nexus-runtime-core": "*",
+    "@bimo-dk/nexus-core": "^1.0.0",
+    "@bimo-dk/nexus-client": "^1.0.0",
+    "@bimo-dk/nexus-runtime-core": "^1.0.0",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

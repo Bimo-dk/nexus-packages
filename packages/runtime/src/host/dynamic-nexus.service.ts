@@ -97,7 +97,7 @@ export class DynamicNexusService {
       let loadComponentFactory: () => Promise<unknown>;
 
       if (typeof mountFn === 'function') {
-        const { NexusByofWrapperComponent } = await import('./byof-wrapper.component.js');
+        const { NexusByofWrapperComponent } = await import('./byof-wrapper.component');
         loadComponentFactory = () => {
           const SubClass = class extends NexusByofWrapperComponent {
             override ngAfterViewInit(): void {
@@ -127,7 +127,7 @@ export class DynamicNexusService {
       };
 
       const existing = this.router.config.filter((r) => r.path !== remote.routePath);
-      const updated: Routes = [...existing, newRoute].sort((a, b) => {
+      const updated: Routes = [...existing, newRoute as Routes[number]].sort((a, b) => {
         if (a.path === '**') return 1;
         if (b.path === '**') return -1;
         return 0;
