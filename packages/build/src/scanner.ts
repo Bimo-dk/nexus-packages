@@ -15,6 +15,12 @@ import { resolveName, toKebabCase } from './naming.js';
 // `import { ..., writeFederationConfig } from '@bimo-dk/nexus-build/scanner'`.
 export { writeFederationConfig, writeCatalogManifest, type GeneratedConfig } from './generator.js';
 export {
+  scanForDefineNexusComponent,
+  discoveredToCatalogEntries,
+  type DiscoveredFunctionComponent,
+  type AutoScanOptions,
+} from './auto-scanner.js';
+export {
   resolveName,
   toCamelCase,
   toKebabCase,

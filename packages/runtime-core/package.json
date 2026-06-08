@@ -2,7 +2,8 @@
   "name": "@bimo-dk/nexus-runtime-core",
   "version": "0.1.0",
   "description": "Framework-agnostic federation loader, self-registration, and reconnect utilities for Bimo-Nexus",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
+  "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",

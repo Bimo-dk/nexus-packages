@@ -56,12 +56,27 @@ export class RegistryClient {
     if (!options.registryUrl) {
       throw new Error('RegistryClient: registryUrl is required');
     }
-    if (!options.token) {
-      throw new Error('RegistryClient: token is required');
+    // Token is optional in browsers: the trust-boundary model in
+    // CLAUDE.md forbids shipping NEXUS_TOKEN into the browser, so
+    // the gateway injects it on the server-to-server hop instead.
+    // Throwing here breaks every browser-side host built with the
+    // Vue / React templates. Log once and continue with an empty
+    // token; the gateway is responsible for upstream auth.
+    // Accept both bare bases (http://registry:3000) and pre-/api URLs
+    // (/api). Internally store apiUrl WITH /api so every endpoint helper
+    // can just append `/remotes`, `/hosts` etc. without re-checking.
+    // Fixes B-23 (double /api/api/) seen from browser hosts that pass
+    // registryUrl='/api'.
+    const raw = options.registryUrl.replace(/\/$/, '');
+    this.apiUrl = /\/api$/.test(raw) ? raw : raw + '/api';
+    this.baseUrl = this.apiUrl + '/remotes';
+    this.token = options.token ?? '';
+    if (!this.token && typeof console !== 'undefined') {
+      console.warn(
+        '[nexus-client] RegistryClient constructed without a token; ' +
+          'assuming a gateway will inject X-Nexus-Token on the registry hop.',
+      );
     }
-    this.apiUrl = options.registryUrl.replace(/\/$/, '');
-    this.baseUrl = this.apiUrl + '/api/remotes';
-    this.token = options.token;
     this.fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
   }
 
@@ -102,115 +117,115 @@ export class RegistryClient {
   // ── Hosts ──────────────────────────────────────────────────────────────────
 
   async getHosts(): Promise<HostConfig[]> {
-    const res = await this.request('GET', `${this.apiUrl}/api/hosts`);
+    const res = await this.request('GET', `${this.apiUrl}/hosts`);
     return (await res.json()) as HostConfig[];
   }
 
   async getHost(id: string): Promise<HostConfig> {
-    const res = await this.request('GET', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}`);
+    const res = await this.request('GET', `${this.apiUrl}/hosts/${encodeURIComponent(id)}`);
     return (await res.json()) as HostConfig;
   }
 
   async getHostRemotes(id: string): Promise<HostRemoteConfig[]> {
-    const res = await this.request('GET', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}/remotes`);
+    const res = await this.request('GET', `${this.apiUrl}/hosts/${encodeURIComponent(id)}/remotes`);
     const body = (await res.json()) as { remotes: HostRemoteConfig[] };
     return body.remotes;
   }
 
   async createHost(dto: CreateHostDto): Promise<HostConfig> {
-    const res = await this.request('POST', `${this.apiUrl}/api/hosts`, dto);
+    const res = await this.request('POST', `${this.apiUrl}/hosts`, dto);
     return (await res.json()) as HostConfig;
   }
 
   async updateHost(id: string, dto: UpdateHostDto): Promise<HostConfig> {
-    const res = await this.request('PUT', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}`, dto);
+    const res = await this.request('PUT', `${this.apiUrl}/hosts/${encodeURIComponent(id)}`, dto);
     return (await res.json()) as HostConfig;
   }
 
   async deleteHost(id: string): Promise<void> {
-    await this.request('DELETE', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}`);
+    await this.request('DELETE', `${this.apiUrl}/hosts/${encodeURIComponent(id)}`);
   }
 
   async toggleHost(id: string): Promise<HostConfig> {
-    const res = await this.request('POST', `${this.apiUrl}/api/hosts/${encodeURIComponent(id)}/toggle`, {});
+    const res = await this.request('POST', `${this.apiUrl}/hosts/${encodeURIComponent(id)}/toggle`, {});
     return (await res.json()) as HostConfig;
   }
 
   // ── Gates ──────────────────────────────────────────────────────────────────
 
   async getGates(): Promise<GateConfig[]> {
-    const res = await this.request('GET', `${this.apiUrl}/api/gates`);
+    const res = await this.request('GET', `${this.apiUrl}/gates`);
     return (await res.json()) as GateConfig[];
   }
 
   async getGate(id: string): Promise<GateConfig> {
-    const res = await this.request('GET', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}`);
+    const res = await this.request('GET', `${this.apiUrl}/gates/${encodeURIComponent(id)}`);
     return (await res.json()) as GateConfig;
   }
 
   async getGateByDomain(domain: string): Promise<GateConfig> {
-    const res = await this.request('GET', `${this.apiUrl}/api/gates/by-domain/${encodeURIComponent(domain)}`);
+    const res = await this.request('GET', `${this.apiUrl}/gates/by-domain/${encodeURIComponent(domain)}`);
     return (await res.json()) as GateConfig;
   }
 
   async createGate(dto: CreateGateDto): Promise<GateConfig> {
-    const res = await this.request('POST', `${this.apiUrl}/api/gates`, dto);
+    const res = await this.request('POST', `${this.apiUrl}/gates`, dto);
     return (await res.json()) as GateConfig;
   }
 
   async updateGate(id: string, dto: UpdateGateDto): Promise<GateConfig> {
-    const res = await this.request('PUT', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}`, dto);
+    const res = await this.request('PUT', `${this.apiUrl}/gates/${encodeURIComponent(id)}`, dto);
     return (await res.json()) as GateConfig;
   }
 
   async deleteGate(id: string): Promise<void> {
-    await this.request('DELETE', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}`);
+    await this.request('DELETE', `${this.apiUrl}/gates/${encodeURIComponent(id)}`);
   }
 
   async toggleGate(id: string): Promise<GateConfig> {
-    const res = await this.request('POST', `${this.apiUrl}/api/gates/${encodeURIComponent(id)}/toggle`, {});
+    const res = await this.request('POST', `${this.apiUrl}/gates/${encodeURIComponent(id)}/toggle`, {});
     return (await res.json()) as GateConfig;
   }
 
   // ── Gateway config ─────────────────────────────────────────────────────────
 
   async getGatewayConfig(): Promise<GatewayConfig> {
-    const res = await this.request('GET', `${this.apiUrl}/api/config/gateway`);
+    const res = await this.request('GET', `${this.apiUrl}/config/gateway`);
     return (await res.json()) as GatewayConfig;
   }
 
   async updateGatewayConfig(patch: Partial<GatewayConfig>): Promise<GatewayConfig> {
-    const res = await this.request('PUT', `${this.apiUrl}/api/config/gateway`, patch);
+    const res = await this.request('PUT', `${this.apiUrl}/config/gateway`, patch);
     return (await res.json()) as GatewayConfig;
   }
 
   // ── Protection ─────────────────────────────────────────────────────────────
 
   async getProtectionStatus(): Promise<ProtectionStatus> {
-    const res = await this.request('GET', `${this.apiUrl}/api/protection/status`);
+    const res = await this.request('GET', `${this.apiUrl}/protection/status`);
     return (await res.json()) as ProtectionStatus;
   }
 
   async getProtectionConfig(): Promise<ProtectionConfig> {
-    const res = await this.request('GET', `${this.apiUrl}/api/config/gateway/protection`);
+    const res = await this.request('GET', `${this.apiUrl}/config/gateway/protection`);
     return (await res.json()) as ProtectionConfig;
   }
 
   async updateProtectionConfig(config: ProtectionConfig): Promise<ProtectionConfig> {
-    const res = await this.request('PUT', `${this.apiUrl}/api/config/gateway/protection`, config);
+    const res = await this.request('PUT', `${this.apiUrl}/config/gateway/protection`, config);
     return (await res.json()) as ProtectionConfig;
   }
 
   async banIp(ip: string, duration_seconds?: number): Promise<void> {
-    await this.request('POST', `${this.apiUrl}/api/protection/ban`, { ip, duration_seconds });
+    await this.request('POST', `${this.apiUrl}/protection/ban`, { ip, duration_seconds });
   }
 
   async unbanIp(ip: string): Promise<void> {
-    await this.request('DELETE', `${this.apiUrl}/api/protection/ban/${encodeURIComponent(ip)}`);
+    await this.request('DELETE', `${this.apiUrl}/protection/ban/${encodeURIComponent(ip)}`);
   }
 
   async clearAllBans(): Promise<void> {
-    await this.request('DELETE', `${this.apiUrl}/api/protection/ban`);
+    await this.request('DELETE', `${this.apiUrl}/protection/ban`);
   }
 
   // ── Health ─────────────────────────────────────────────────────────────────

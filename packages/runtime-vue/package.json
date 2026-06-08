@@ -2,7 +2,8 @@
   "name": "@bimo-dk/nexus-runtime-vue",
   "version": "0.1.0",
   "description": "Vue 3 plugin, composables, and NexusComponent for Bimo-Nexus hosts and remotes",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
+  "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",

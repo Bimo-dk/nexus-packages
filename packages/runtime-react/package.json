@@ -2,7 +2,8 @@
   "name": "@bimo-dk/nexus-runtime-react",
   "version": "0.1.0",
   "description": "React 18 provider, hooks, and NexusComponent for Bimo-Nexus hosts and remotes",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
+  "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",

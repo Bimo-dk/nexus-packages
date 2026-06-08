@@ -112,4 +112,4 @@ bus.respond<{ id: string }, User>('user:get', async ({ id }) => {
 
 ## License
 
-MIT
+AGPL-3.0-or-later — see [LICENSE](../../LICENSE). Commercial license available for AGPL-incompatible projects: contact svp@bimo.dk.

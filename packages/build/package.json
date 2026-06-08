@@ -2,7 +2,8 @@
   "name": "@bimo-dk/nexus-build",
   "version": "0.2.1",
   "description": "Auto-generate Native Federation config from @NexusRemote class decorators",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
+  "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Bimo-dk/nexus-packages.git",
