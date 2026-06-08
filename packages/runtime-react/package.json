@@ -1,6 +1,6 @@
 {
   "name": "@bimo-dk/nexus-runtime-react",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "React 18 provider, hooks, and NexusComponent for Bimo-Nexus hosts and remotes",
   "license": "AGPL-3.0-or-later",
   "author": "Steffen Vitten Pedersen <svp@bimo.dk>",
@@ -33,9 +33,9 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@bimo-dk/nexus-core": "*",
-    "@bimo-dk/nexus-client": "*",
-    "@bimo-dk/nexus-runtime-core": "*"
+    "@bimo-dk/nexus-core": "^1.0.0",
+    "@bimo-dk/nexus-client": "^1.0.0",
+    "@bimo-dk/nexus-runtime-core": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",
